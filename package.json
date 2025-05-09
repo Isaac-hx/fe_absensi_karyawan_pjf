@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@lemonadejs/signature": "^5.0.0",
     "@phosphor-icons/react": "^2.1.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -1,4 +1,6 @@
 import type React from "react";
+import { AppContext } from "../context/AppContext";
+import { useContext } from "react";
 
 interface IInput {
     labelText: string;
@@ -8,10 +10,11 @@ interface IInput {
     as?: "input" | "textarea"; // Menentukan apakah ini `input` atau `textarea`
     accept?: string;
     className?: string;
-    value?: string;
     readonly?: boolean;
+    value?:string
     rows?: number; // Untuk menentukan jumlah baris pada textarea
-    onChangeInput?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onChangeInput?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; // Handler perubahan
+
 }
 
 const Input: React.FC<IInput> = ({
@@ -23,10 +26,12 @@ const Input: React.FC<IInput> = ({
     onChangeInput,
     accept,
     className,
-    readonly = false,
     value,
+    readonly = false,
     rows = 4, // Default jumlah baris untuk textarea
 }) => {
+
+
     return (
         <div className="mb-4  p-2">
             <label className="font-medium text-sm" htmlFor={idInput}>
