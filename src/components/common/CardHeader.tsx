@@ -7,7 +7,7 @@ const CardHeader:React.FC =()=>{
                         <div>
                             <h1 className="font-medium text-xl">Absensi Karyawan</h1>
                         </div>
-                        <div className="space-y-2 md:space-y-0 md:space-x-1 md:flex md:gap-2">
+                        <div className="space-y-2 md:space-y-0 md:space-x-1 md:flex xl:gap-2">
                             <div className="flex p-1 items-center gap-1 bg-gray-100 rounded-full">
                                 <Clock size={20} />
                                 <p className="text-xs font-semibold">Absen masuk : 05.00 AM - 10.00 AM</p>
