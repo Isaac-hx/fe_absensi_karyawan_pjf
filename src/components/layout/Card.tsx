@@ -3,7 +3,7 @@ import CardBody from "../common/CardBody";
 import CardFooter from "../common/CardFooter";
 import { useContext, useRef } from "react";
 import { AppContext } from "../context/AppContext";
-
+import Swal from 'sweetalert2'
 
 const Card: React.FC<{ children: React.ReactNode }> = ({ children }) =>{
   const { data,setData } = useContext(AppContext);
@@ -22,7 +22,11 @@ setData((prevData: any) => ({
     ...prevData,
     signature_image: signatureData,
 }));
-  console.log(data)
+  return Swal.fire({
+    title:"Gagal",
+    icon:"error"
+  });
+
     // Anda juga bisa log data setelah pembaruan state selesai jika diperlukan
   };
     return (
