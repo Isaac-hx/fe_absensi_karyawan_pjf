@@ -45,6 +45,7 @@ const Input: React.FC<IInput> = ({
                     accept={accept}
                     readOnly={readonly}
                     value={value}
+                    required
                     placeholder={placeholder}
                     className={`${className} w-full text-sm  ring-2  mt-1 outline-none rounded-sm focus:ring-slate-300 ring-slate-200`}
                     onChange={onChangeInput}
@@ -55,6 +56,7 @@ const Input: React.FC<IInput> = ({
                     name={idInput}
                     rows={rows}
                     readOnly={readonly}
+                    required
                     value={value}
                     placeholder={placeholder}
                     className={`${className} w-full text-sm p-1 ring-2 mt-1 outline-none rounded-sm focus:ring-slate-500 ring-slate-50`}

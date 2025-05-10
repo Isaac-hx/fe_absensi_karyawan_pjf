@@ -4,6 +4,7 @@ import InputPhoto from "./PhotoInput";
 import { MapPin } from "@phosphor-icons/react";
 import { AppContext } from "../context/AppContext";
 import SignaturePad from "./SignaturePad";
+import Swal from "sweetalert2";
 
 interface ICardBody {
   sigCanvas: React.RefObject<any>;
@@ -63,12 +64,18 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
   // Handle photo input change
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target?.files?.[0];
-    if (file) {
-      setData((prevData) => ({
-        ...prevData,
-        url_photo: URL.createObjectURL(file), // Fixed to match the data structure
-      }));
+    console.log(file)
+    if (!file) {
+        return Swal.fire(
+            {title:"Format salah",icon:"error"}
+        )
     }
+
+    setData((prevData) => ({
+        ...prevData,
+        url_photo: file, // Fixed to match the data structure
+        preview_photo:URL.createObjectURL(file)
+      }));
   };
 
   // Handle input or textarea changes
@@ -105,6 +112,18 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
             handlePhotoChange={handlePhotoChange}
           />
         </div>
+        
+        <div className="relative">
+          <Input
+    labelText="Lokasi saat ini"
+    idInput="current_location"
+    className="border border-slate-200 pl-3 pr-10 py-2 rounded-lg w-full"
+    placeholder="Lokasi saat ini"
+    value={data?.location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
+    readonly={true}    
+          />
+          <MapPin className="absolute top-2/3 right-3 md:top-[24%] transform -translate-y-1/2 text-gray-500" />
+        </div>
         {showTargetWork &&
                 <div className="md:col-span-2">
                 <Input
@@ -119,17 +138,6 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
         }
 
 
-        <div className="relative">
-          <Input
-    labelText="Lokasi saat ini"
-    idInput="current_location"
-    className="border border-slate-200 pl-3 pr-10 py-2 rounded-lg w-full"
-    placeholder="Lokasi saat ini"
-    value={data?.location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
-    readonly={true}    
-          />
-          <MapPin className="absolute top-2/3 right-3 md:top-[24%] transform -translate-y-1/2 text-gray-500" />
-        </div>
         {!showTargetWork && 
                 <div className="md:col-span-2">
                 <Input

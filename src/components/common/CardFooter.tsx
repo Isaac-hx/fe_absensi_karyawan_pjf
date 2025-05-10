@@ -1,17 +1,16 @@
 import type React from "react";
 
-const CardFooter:React.FC = ()=>{
-    return(
+const CardFooter: React.FC = () => {
+    return (
         <>
-        
-        <button
-                        className="p-2 w-full cursor-pointer shadow-sm rounded-md bg-slate-500 text-white text-2xl font-medium"
-                        type="submit"
-                    >
-                        Absen
-                    </button>
+            <button
+                className="p-2 w-full cursor-pointer shadow-sm rounded-md bg-slate-500 text-white txt-md md:text-lg  font-medium"
+                type="submit"
+            >
+                Absen
+            </button>
         </>
-    )
-}
+    );
+};
 
-export default CardFooter
+export default CardFooter;

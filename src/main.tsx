@@ -4,7 +4,6 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter} from "react-router";
 import { AppProvider } from './components/context/AppContext.tsx';
-import { ChakraProvider } from '@chakra-ui/react';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
