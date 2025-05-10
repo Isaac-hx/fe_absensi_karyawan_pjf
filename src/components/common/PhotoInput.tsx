@@ -33,7 +33,7 @@ const InputPhoto: React.FC<IPhotoInput> = ({ handlePhotoChange }) => {
 
                 <Input
                     labelText="Upload photo"
-                    idInput="url_photo"
+                    idInput="file_profile"
                     placeholder="Upload foto absen"
                     type="file"
                     onChangeInput={handlePhotoChange}

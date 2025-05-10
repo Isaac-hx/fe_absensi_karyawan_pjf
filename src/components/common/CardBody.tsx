@@ -29,7 +29,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
           const { latitude, longitude } = position.coords;
           setData((prevData) => ({
             ...prevData,
-            location: `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`,
+            location: `Lat: ${latitude}, Lng: ${longitude}`,
           }));
         },
         () => {
@@ -56,7 +56,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
       sigCanvas.current.clear();
       setData((prevData) => ({
         ...prevData,
-        signature_image: null,
+        file_signature: null,
       }));
     }
   };
@@ -73,7 +73,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
 
     setData((prevData) => ({
         ...prevData,
-        url_photo: file, // Fixed to match the data structure
+        file_profile: file, // Fixed to match the data structure
         preview_photo:URL.createObjectURL(file)
       }));
   };
@@ -122,7 +122,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
     value={data?.location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
     readonly={true}    
           />
-          <MapPin className="absolute top-2/3 right-3 md:top-[24%] transform -translate-y-1/2 text-gray-500" />
+          <MapPin className="absolute top-2/3 right-3 md:top-[20%] transform -translate-y-1/2 text-gray-500" />
         </div>
         {showTargetWork &&
                 <div className="md:col-span-2">

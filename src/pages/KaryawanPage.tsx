@@ -5,7 +5,9 @@ import { AppContext } from "../components/context/AppContext";
 import CardFooter from "../components/common/CardFooter";
 import CardBody from "../components/common/CardBody";
 import Swal from 'sweetalert2'
-import { postData } from "../services/cloudinary";
+import { imageConvert } from "../helper/imageConvert";
+import { postToCloudinary } from "../data/postToCloudinary";
+import { getCurrentDateAndTime } from "../helper/getClock";
 const KaryawanPage: React.FC = () => {
     const { data, setData } = useContext(AppContext);
     const sigCanvas = useRef<any>(null);
@@ -13,24 +15,33 @@ const KaryawanPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log(data.url_photo);
         // Ambil data tanda tangan
         const signatureData = sigCanvas.current?.toDataURL("image/png");
-        
-        // Perbarui state dengan signature image
-        setData((prevData: any) => ({
-            ...prevData,
-            signature_image: signatureData,
-        }));
+        const signatureImage = await imageConvert(signatureData)
+        const {date,time} = getCurrentDateAndTime()
+
         try{
-            const res = await postData(data.url_photo)
-            console.log(res)
+            //Get url data from cloudinary
+            const {url_profile,url_signature} = await postToCloudinary(data.file_profile,signatureImage)
+                    
+            const to_up = {
+                id_karyawan:data.employee_id,
+                url_profile:url_profile,
+                url_signature:url_signature,
+                target_work:data.target_work,
+                result_work:data.result_work,
+                location:data.location,
+                create_date:date,
+                create_time:time
+            
+            }
         } catch(error){
             return Swal.fire({
                 title: "Gagal absensi",
                 icon: "error",
             });
         }
+
 
     };
 

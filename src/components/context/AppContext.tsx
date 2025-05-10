@@ -5,8 +5,7 @@ interface AppData {
   target_work?: string;
   result_work?: string;
   location?: string;
-  url_photo?: File | null;
-  signature_image?: any;
+  file_profile?: File | null;
   preview_photo?:string;
 }
 
@@ -25,9 +24,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     employee_id:"",
     target_work:"",
     result_work:"",
-    signature_image:"",
     location: "",
-    url_photo:null, // Inisialisasi nilai awal untuk menghindari undefined
+    file_profile:null, // Inisialisasi nilai awal untuk menghindari undefined
     preview_photo:""
   });
 
