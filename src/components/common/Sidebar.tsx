@@ -1,9 +1,11 @@
 import type React from "react";
 import { Users,Notebook,ShieldUser,Home } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 import { UtilityContext } from "../context/UtilityContext"
 import { useContext } from "react"
+import { capitalize } from "@/helper/capitalize";
+
 const data =[
       {
         icon:<Home size={20}/>,
@@ -30,9 +32,16 @@ const data =[
     }
 ]
 const SideBar:React.FC = ()=>{
-    const [isMenuActive,setMenuIsActive] = useState("Dashboard")
+    const location = useLocation()
+    const [isMenuActive,setMenuIsActive] = useState<string | null>(null)
     const {activeSidebar, setActiveSidebar} = useContext(UtilityContext)
-    console.log(activeSidebar)
+    useEffect(() => {
+        const splitLocation = location.pathname.split("/");
+        const lastSegment = splitLocation[splitLocation.length - 1];
+
+        setMenuIsActive(lastSegment === "dashboard-admin" ? "Dashboard" : capitalize(lastSegment));
+    }, []);
+    
     return(
         <nav className={`relative left-[0]`} >
             {/* Header */}
@@ -46,12 +55,13 @@ const SideBar:React.FC = ()=>{
                 {
                     data.map((item)=>{
                         return(
-                    <Link  
+                    <Link 
+                    key={item.labelComponent} 
                     to={item.linkTo}
                     onClick={()=>{setMenuIsActive(item.labelComponent)}}
                     className={`flex ${isMenuActive === item.labelComponent ? " bg-slate-100 border-l-4 border-emerald-500 text-emerald-500  " :""}  items-center gap-x-3 gap-y-8 md:gap-y-10 cursor-pointer hover:bg-slate-100 px-4 py-2  rounded-sm cli:bg-slate-100`}>
                         {item.icon}
-                        <p className={`text-sm md:text-lg font-medium  ${isMenuActive === item.labelComponent? 'text-emerald-500':""}`}>{item.labelComponent}</p>
+                        <p className={`text-sm md:text-lg font-medium   ${isMenuActive === item.labelComponent? 'text-emerald-500':""}`}>{item.labelComponent}</p>
                     </Link>
                         )
                     })

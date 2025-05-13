@@ -8,9 +8,13 @@ const AdminPage:React.FC = ()=>{
     return(
         <>
             <Header />
-            <div className="flex overflow-hidden">
-                <SideBar/>
-                <Outlet />
+            <div className="flex">
+                <div className="">
+                    <SideBar/>
+                </div>
+                <main className="md:ml-71 container p-4 bg-slate-50">
+                   <Outlet />
+                </main>
             </div>
         </>
     )

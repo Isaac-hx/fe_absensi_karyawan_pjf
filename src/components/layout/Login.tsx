@@ -3,6 +3,7 @@ import type React from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
+import Swal from "sweetalert2"
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("")
@@ -49,6 +50,8 @@ const Login: React.FC = () => {
                   type="text"
                   placeholder="Username"
                   className="appearance-none bg-white  relative block w-full px-3 py-2  border-gray-300 placeholder-gray-500 text-gray-900 rounded-none rounded-t-md focus:outline-none border-0 focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                  required
+
                   onChange={(e)=>{setUsername(e.target.value)}}/> 
             </div>
             <div>
@@ -57,6 +60,7 @@ const Login: React.FC = () => {
                   type="password"
                   placeholder="Password"
                   className="appearance-none bg-white  relative block w-full px-3 py-2 border-gray-300 placeholder-gray-500 text-gray-900 rounded-none rounded-b-md focus:outline-none focus:ring-emerald-500 border-0 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                  required
                   onChange={(e)=>{setPassword(e.target.value)}}/>  
             </div>
           </div>

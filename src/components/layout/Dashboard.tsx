@@ -1,14 +1,47 @@
 import type React from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 
+import { Users } from "lucide-react";
+import TextLabel from "../common/TextLabel";
+const Dashboard: React.FC = () => {
+  return (
+    <div className="">
+      {/* Header */}
+      <section>
+          <TextLabel text="Dashboard"/>
+      </section>
+      {/* End header */}
 
-const Dashboard:React.FC = ()=>{
-    return(
-        
-        <>
-          This is dashboard
-        </>
-       
-    )
-}
+      {/* Body */}
+      <section className="grid grid-cols-1 md:grid-cols-2 container">
+        <div >
+          <Card className="md:w-[280px]">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+               <div className="bg-emerald-500 text-emerald-200 rounded-full w-fit p-2"> 
+                <Users  />
+              </div>
+              <div>
+                <CardTitle className="text-xl md:text-lg">Jumlah Karyawan</CardTitle>
+              </div>              
+            </div>
 
-export default Dashboard
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl">30</p>
+          </CardContent>
+        </Card>
+        </div>
+
+      </section>
+      {/* End body */}
+    </div>
+  );
+};
+
+export default Dashboard;

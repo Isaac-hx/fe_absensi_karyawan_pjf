@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { UtilityContext } from "../context/UtilityContext"
 import { useContext } from "react"
+import TextLabel from "./TextLabel"
 
 const Header = () => {
   const {activeSidebar, setActiveSidebar} = useContext(UtilityContext)
@@ -19,6 +20,9 @@ const Header = () => {
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
       <div>
         Logo
+      </div>
+      <div>
+        <TextLabel text="Karyawan"/>
       </div>
       <div>
         <Menu className="md:hidden" onClick={()=>{setActiveSidebar(!activeSidebar)}}/>  
