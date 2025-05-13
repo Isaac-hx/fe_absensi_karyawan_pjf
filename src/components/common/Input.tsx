@@ -33,7 +33,7 @@ const Input: React.FC<IInput> = ({
 
 
     return (
-        <div className="mb-4  p-2">
+        <div className="">
             <label className="font-medium text-sm" htmlFor={idInput}>
                 {labelText}
             </label>
@@ -47,7 +47,7 @@ const Input: React.FC<IInput> = ({
                     value={value}
                     required
                     placeholder={placeholder}
-                    className={`${className} w-full text-sm  ring-2  mt-1 outline-none rounded-sm focus:ring-slate-300 ring-slate-200`}
+                    className={`${className} w-full text-sm px-2 py-3 outline-none focus:ring-emerald-300 ring-emerald-200`}
                     onChange={onChangeInput}
                 />
             ) : (
@@ -59,7 +59,7 @@ const Input: React.FC<IInput> = ({
                     required
                     value={value}
                     placeholder={placeholder}
-                    className={`${className} w-full text-sm p-1 ring-2 mt-1 outline-none rounded-sm focus:ring-slate-500 ring-slate-50`}
+                    className={`${className} w-full text-sm p-1 ring-2 mt-1 outline-none rounded-sm focus:ring-emerald-500 ring-emerald-200`}
                     onChange={onChangeInput}
                 />
             )}

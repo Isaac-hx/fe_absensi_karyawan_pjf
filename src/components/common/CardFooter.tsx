@@ -4,7 +4,7 @@ const CardFooter: React.FC = () => {
     return (
         <>
             <button
-                className="p-2 w-full cursor-pointer shadow-sm rounded-md bg-slate-500 text-white txt-md md:text-lg  font-medium"
+                className="p-2 w-full cursor-pointer shadow-sm rounded-md bg-emerald-500 text-white txt-md md:text-lg  font-medium"
                 type="submit"
             >
                 Absen

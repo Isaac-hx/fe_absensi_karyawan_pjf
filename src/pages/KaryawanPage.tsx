@@ -52,6 +52,7 @@ const KaryawanPage: React.FC = () => {
                 <section className="space-y-2">
                     <CardHeader />
                 </section>
+                <hr className="text-slate-200 my-4 border-1"/>
                 {/* End Header section */}
                 <section>
                     <form onSubmit={(e) => handleSubmit(e)}>

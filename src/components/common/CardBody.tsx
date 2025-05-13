@@ -92,17 +92,18 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
       <div className="space-y-4 md:grid md:grid-cols-2 gap-2">
         <div>
           <Input
-            className="py-2 pl-1"
-            labelText="ID Karyawan"
+            className="py-2 pl-1 ring-2 ring-emerald- rounded-md"
+            labelText="ID karyawan"
             idInput="employee_id"
             placeholder="Masukan ID Karyawan"
             type="text"
+            
             onChangeInput={handleChange}
           />
         </div>
         <div>
           <SignaturePad
-            textLabel="Ttd Karyawan"
+            textLabel="Tanda tangan karyawan"
             handleClearSignature={handleClearSignature}
             sigCanvas={sigCanvas}
           />
@@ -117,12 +118,12 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
           <Input
     labelText="Lokasi saat ini"
     idInput="current_location"
-    className="border border-slate-200 pl-3 pr-10 py-2 rounded-lg w-full"
+    className="border border-emerald-200 pl-3 pr-10 py-2 rounded-lg w-full"
     placeholder="Lokasi saat ini"
     value={data?.location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
     readonly={true}    
           />
-          <MapPin className="absolute top-2/3 right-3 md:top-[20%] transform -translate-y-1/2 text-gray-500" />
+          <MapPin className="absolute top-2/3 right-3 md:top-[24%] transform -tranemerald-y-1/2 text-gray-500" />
         </div>
         {showTargetWork &&
                 <div className="md:col-span-2">
@@ -147,7 +148,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
                   as="textarea"
                   rows={6}
                   onChangeInput={handleChange}
-                  className=""
+                  
                 />
               </div>}
 

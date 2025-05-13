@@ -30,8 +30,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   return (
-    <AppContext.Provider value={{ data, setData }}>
+    <AppContext.Provider value={{ data, setData}}>
       {children}
     </AppContext.Provider>
-  );
+  );``
 };

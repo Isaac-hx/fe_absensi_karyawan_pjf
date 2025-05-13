@@ -25,7 +25,7 @@ const SignaturePad: React.FC<ISignature> = ({ textLabel, sigCanvas, handleClearS
         {/* Clear Button */}
         <button
           onClick={(e) => handleClearSignature(e)}
-          className="absolute bottom-2 right-2 bg-slate-500 text-white text-sm px-4 py-1 rounded hover:bg-slate-600 focus:outline-none"
+          className="absolute bottom-2 right-2 bg-emerald-500 text-white text-sm px-4 py-1 rounded hover:bg-emerald-600 focus:outline-none"
         >
           Clear
         </button>
