@@ -12,7 +12,7 @@ const AdminPage:React.FC = ()=>{
                 <div className="">
                     <SideBar/>
                 </div>
-                <main className="md:ml-71 container p-4 bg-slate-50">
+                <main className="md:ml-71 container p-6 bg-slate-50">
                    <Outlet />
                 </main>
             </div>

@@ -13,7 +13,6 @@ const Dashboard: React.FC = () => {
     <div className="">
       {/* Header */}
       <section>
-          <TextLabel text="Dashboard"/>
       </section>
       {/* End header */}
 

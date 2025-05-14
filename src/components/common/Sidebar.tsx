@@ -33,13 +33,12 @@ const data =[
 ]
 const SideBar:React.FC = ()=>{
     const location = useLocation()
-    const [isMenuActive,setMenuIsActive] = useState<string | null>(null)
-    const {activeSidebar, setActiveSidebar} = useContext(UtilityContext)
+    const {activeSidebar,setMenuState,menuState} = useContext(UtilityContext)
     useEffect(() => {
         const splitLocation = location.pathname.split("/");
         const lastSegment = splitLocation[splitLocation.length - 1];
 
-        setMenuIsActive(lastSegment === "dashboard-admin" ? "Dashboard" : capitalize(lastSegment));
+        setMenuState(lastSegment === "dashboard-admin" ? "Dashboard" : capitalize(lastSegment));
     }, []);
     
     return(
@@ -58,10 +57,10 @@ const SideBar:React.FC = ()=>{
                     <Link 
                     key={item.labelComponent} 
                     to={item.linkTo}
-                    onClick={()=>{setMenuIsActive(item.labelComponent)}}
-                    className={`flex ${isMenuActive === item.labelComponent ? " bg-slate-100 border-l-4 border-emerald-500 text-emerald-500  " :""}  items-center gap-x-3 gap-y-8 md:gap-y-10 cursor-pointer hover:bg-slate-100 px-4 py-2  rounded-sm cli:bg-slate-100`}>
+                    onClick={()=>{setMenuState(item.labelComponent)}}
+                    className={`flex ${menuState === item.labelComponent ? " bg-slate-100 border-l-4 border-emerald-500 text-emerald-500  " :""}  items-center gap-x-3 gap-y-8 md:gap-y-10 cursor-pointer hover:bg-slate-100 px-4 py-2  rounded-sm cli:bg-slate-100`}>
                         {item.icon}
-                        <p className={`text-sm md:text-lg font-medium   ${isMenuActive === item.labelComponent? 'text-emerald-500':""}`}>{item.labelComponent}</p>
+                        <p className={`text-sm md:text-lg font-medium   ${menuState === item.labelComponent? 'text-emerald-500':""}`}>{item.labelComponent}</p>
                     </Link>
                         )
                     })

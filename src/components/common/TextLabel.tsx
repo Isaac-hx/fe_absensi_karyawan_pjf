@@ -4,7 +4,7 @@ interface ITextLabel{
 }
 const TextLabel:React.FC<ITextLabel>=({text})=>{
     return(
-    <h1 className="text-2xl font-semibold leading-relaxed m-4">{text}</h1>
+    <h1 className="text-lg  md:text-2xl font-semibold leading-relaxed m-4">{text}</h1>
 
     )
 }
