@@ -31,6 +31,19 @@ const Karyawan: React.FC = () => {
         telp:"",
         jenis_kelamin:""
     })
+    const [searchNameKaryawan,setSearchNameKaryawan]=useState(null)
+
+    const handleKeyDown = (e)=>{
+        if(e.key === "Enter"){
+            e.preventDefault()
+            handleSearchState()
+
+        }
+    }
+    const handleSearchState = ()=>{
+        console.log(searchNameKaryawan)
+    }
+
     const handleSortKaryawan = () => {
         data.sort((a, b) => a.nama.localeCompare(b.nama));
     };
@@ -140,6 +153,8 @@ const Karyawan: React.FC = () => {
                         <Input
                             id="search-karyawan"
                             type="text"
+                            onKeyDown={handleKeyDown}
+                            onChange={(e)=>{setSearchNameKaryawan(e.target.value)}}
                             className="w-full pl-10 text-xs bg-white py-4 md:py-6"
                             placeholder="Masukan nama karyawan..."
                         />
