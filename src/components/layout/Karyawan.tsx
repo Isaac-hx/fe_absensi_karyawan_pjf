@@ -10,6 +10,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
 import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
+import TooltipOverlay from "@/components/common/TooltipOverlay";
 
 const data = [
     { id: 1475, nama: "Rina", gender: "Perempuan", email: "rina@example.com", no_telepon: "081234567890" },
@@ -216,12 +217,14 @@ const Karyawan: React.FC = () => {
                             placeholder="Masukan nama karyawan..."
                         />
                     </div>
-                    <Button
+                    <TooltipOverlay text="Sort">                    
+                        <Button
                         className="bg-slate-50 border border-emerald-500 shadow-sm text-emerald-500 text-xl hover:bg-emerald-100 cursor-pointer"
-                        onClick={handleSortKaryawan}
-                    >
+                        onClick={handleSortKaryawan}>
                         <ArrowUpDown />
                     </Button>
+                    </TooltipOverlay>
+
                 </div>
                 <Table className="bg-white">
                     <TableHeader className="bg-slate-100">
@@ -236,95 +239,104 @@ const Karyawan: React.FC = () => {
                     </TableHeader>
                     <TableBody>
                         {data.map((item) => (
-                            <TableRow className="p-5" key={item.id}>
-                                <TableCell className="font-medium p-4">{item.id}</TableCell>
+                            <TableRow className="" key={item.id}>
+                                <TableCell className="font-medium p-4 ">{item.id}</TableCell>
                                 <TableCell className="text-slate-600">{item.nama}</TableCell>
                                 <TableCell className="text-slate-600">{item.email}</TableCell>
                                 <TableCell className="text-slate-600">{item.no_telepon}</TableCell>
                                 <TableCell className="text-slate-600">{item.gender}</TableCell>
-                                <TableCell className="flex items-center gap-3">
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Pencil className="text-slate-500 cursor-pointer" size={15} />
-                                        </DialogTrigger>
-                                        <DialogOverlay
-                                            data={{
-                                                title: "Edit karyawan",
-                                                description: "Edit data karyawan",
-                                                button: "Save",
-                                                onSubmit: handleEditKaryawan
-                                            }}
-                                        >
-                                            <div className="grid gap-4 py-4">
-                                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
-                                                    <Label htmlFor="nama" className="text-right">
-                                                        Nama
-                                                    </Label>
-                                                    <Input
-                                                        required
-                                                        id="nama"
-                                                        defaultValue={"Dimas ananda riyadi"}
-                                                        name="nama"
-                                                        onChange={(e) => { handleChange(e, "edit"); }}
-                                                        placeholder="Masukkan nama"
-                                                        className="col-span-3 md:text-sm text-xs"
-                                                    />
+                                <TableCell >
+                                    <div className="flex items-center gap-3">
+                                        <Dialog>
+                                            <TooltipOverlay text="Edit">
+                                                <DialogTrigger asChild>
+                                                
+                                                <Pencil className="text-slate-500 cursor-pointer" size={15} />
+                                            </DialogTrigger>
+                                            </TooltipOverlay>
+ 
+                                            <DialogOverlay
+                                                data={{
+                                                    title: "Edit karyawan",
+                                                    description: "Edit data karyawan",
+                                                    button: "Save",
+                                                    onSubmit: handleEditKaryawan
+                                                }}
+                                            >
+                                                <div className="grid gap-4 py-4">
+                                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
+                                                        <Label htmlFor="nama" className="text-right">
+                                                            Nama
+                                                        </Label>
+                                                        <Input
+                                                            required
+                                                            id="nama"
+                                                            defaultValue={"Dimas ananda riyadi"}
+                                                            name="nama"
+                                                            onChange={(e) => { handleChange(e, "edit"); }}
+                                                            placeholder="Masukkan nama"
+                                                            className="col-span-3 md:text-sm text-xs"
+                                                        />
+                                                    </div>
+                                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
+                                                        <Label htmlFor="email" className="text-right">
+                                                            Email
+                                                        </Label>
+                                                        <Input
+                                                            required
+                                                            id="email"
+                                                            name="email"
+                                                            onChange={(e) => { handleChange(e, "edit"); }}
+                                                            placeholder="Masukkan email"
+                                                            className="col-span-3 md:text-sm text-xs"
+                                                        />
+                                                    </div>
+                                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
+                                                        <Label htmlFor="telp" className="text-right">
+                                                            No.Telp
+                                                        </Label>
+                                                        <Input
+                                                            id="telp"
+                                                            required
+                                                            name="telp"
+                                                            onChange={(e) => { handleChange(e, "edit"); }}
+                                                            placeholder="Masukkan nomer telephone"
+                                                            className="col-span-3 md:text-sm text-xs"
+                                                        />
+                                                    </div>
+                                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
+                                                        <Label htmlFor="Gender" className="text-right">
+                                                            Gender
+                                                        </Label>
+                                                        <Select
+                                                            required
+                                                            defaultValue="pria"
+                                                            onValueChange={(value) =>
+                                                                setEditKaryawanState((prev) => ({ ...prev, jenis_kelamin: value }))
+                                                            }
+                                                        >
+                                                            <SelectTrigger className="w-[180px] ">
+                                                                <SelectValue placeholder="Pilih jenis kelamin" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectGroup defaultValue={"pria"}>
+                                                                    <SelectLabel>Jenis kelamin</SelectLabel>
+                                                                    <SelectItem value="pria">Pria</SelectItem>
+                                                                    <SelectItem value="perempuan">Perempuan</SelectItem>
+                                                                </SelectGroup>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
                                                 </div>
-                                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
-                                                    <Label htmlFor="email" className="text-right">
-                                                        Email
-                                                    </Label>
-                                                    <Input
-                                                        required
-                                                        id="email"
-                                                        name="email"
-                                                        onChange={(e) => { handleChange(e, "edit"); }}
-                                                        placeholder="Masukkan email"
-                                                        className="col-span-3 md:text-sm text-xs"
-                                                    />
-                                                </div>
-                                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
-                                                    <Label htmlFor="telp" className="text-right">
-                                                        No.Telp
-                                                    </Label>
-                                                    <Input
-                                                        id="telp"
-                                                        required
-                                                        name="telp"
-                                                        onChange={(e) => { handleChange(e, "edit"); }}
-                                                        placeholder="Masukkan nomer telephone"
-                                                        className="col-span-3 md:text-sm text-xs"
-                                                    />
-                                                </div>
-                                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
-                                                    <Label htmlFor="Gender" className="text-right">
-                                                        Gender
-                                                    </Label>
-                                                    <Select
-                                                        required
-                                                        defaultValue="pria"
-                                                        onValueChange={(value) =>
-                                                            setEditKaryawanState((prev) => ({ ...prev, jenis_kelamin: value }))
-                                                        }
-                                                    >
-                                                        <SelectTrigger className="w-[180px] ">
-                                                            <SelectValue placeholder="Pilih jenis kelamin" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectGroup defaultValue={"pria"}>
-                                                                <SelectLabel>Jenis kelamin</SelectLabel>
-                                                                <SelectItem value="pria">Pria</SelectItem>
-                                                                <SelectItem value="perempuan">Perempuan</SelectItem>
-                                                            </SelectGroup>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                            </div>
-                                        </DialogOverlay>
-                                    </Dialog>
-                                    <DialogAlert>
-                                        <Trash2 size={15} className="text-red-500 cursor-pointer" />
-                                    </DialogAlert>
+                                            </DialogOverlay>
+                                        </Dialog>
+                                        <DialogAlert>
+                                            <TooltipOverlay text="Delete">
+                                                 <Trash2 size={15} className="text-red-500 cursor-pointer" />
+                                            </TooltipOverlay>
+                                        </DialogAlert>
+                                    </div>
+
                                 </TableCell>
                             </TableRow>
                         ))}
