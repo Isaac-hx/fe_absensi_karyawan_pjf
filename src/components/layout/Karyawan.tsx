@@ -11,6 +11,9 @@ import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLa
 import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
+import PaginationOverlay from "@/components/common/PaginationOverlay";
+
+import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const data = [
     { id: 1475, nama: "Rina", gender: "Perempuan", email: "rina@example.com", no_telepon: "081234567890" },
@@ -205,15 +208,15 @@ const Karyawan: React.FC = () => {
 
             {/* Table list karyawan */}
             <section className="bg-white rounded-lg border space-y-2 py-2">
-                <div className="flex justify-between items-center p-4">
-                    <div className="relative w-2/6">
+                <div className="space-y-4 md:flex md:justify-between items-center p-4">
+                    <div className="relative md:w-2/6">
                         <Search className="text-gray-400 text-xs absolute top-2 left-2 md:top-3 md:left-2" />
                         <Input
                             id="search-karyawan"
                             type="text"
                             onKeyDown={handleKeyDown}
                             onChange={(e) => { setSearchNameKaryawan(e.target.value); }}
-                            className="w-full pl-10 text-xs bg-white py-4 md:py-6"
+                            className="w-full pl-10  text-xs bg-white py-4 md:py-6"
                             placeholder="Masukan nama karyawan..."
                         />
                     </div>
@@ -226,7 +229,7 @@ const Karyawan: React.FC = () => {
                     </TooltipOverlay>
 
                 </div>
-                <Table className="bg-white">
+                <Table className="bg-white overflow-x-scroll">
                     <TableHeader className="bg-slate-100">
                         <TableRow>
                             <TableHead className="text-emerald-600">ID</TableHead>
@@ -249,7 +252,7 @@ const Karyawan: React.FC = () => {
                                     <div className="flex items-center gap-3">
                                         <Dialog>
                                             <TooltipOverlay text="Edit">
-                                                <DialogTrigger asChild>
+                                            <DialogTrigger asChild>
                                                 
                                                 <Pencil className="text-slate-500 cursor-pointer" size={15} />
                                             </DialogTrigger>
@@ -332,9 +335,13 @@ const Karyawan: React.FC = () => {
                                         </Dialog>
                                         <DialogAlert>
                                             <TooltipOverlay text="Delete">
-                                                 <Trash2 size={15} className="text-red-500 cursor-pointer" />
+                                                <AlertDialogTrigger asChild>
+                                                            <Trash2 size={15} className="text-red-500 cursor-pointer" />
+                                                </AlertDialogTrigger>  
                                             </TooltipOverlay>
+  
                                         </DialogAlert>
+
                                     </div>
 
                                 </TableCell>
@@ -342,6 +349,11 @@ const Karyawan: React.FC = () => {
                         ))}
                     </TableBody>
                 </Table>
+            </section>
+            <section className="mt-2">
+                
+                    <PaginationOverlay><p>dimas</p></PaginationOverlay>
+
             </section>
         </div>
     );

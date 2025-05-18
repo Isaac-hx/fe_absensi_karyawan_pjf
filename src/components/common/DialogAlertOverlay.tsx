@@ -22,9 +22,7 @@ interface IDialogAlert{
 const DialogAlert:React.FC<IDialogAlert>=({children,title="Delete this data?",description="This action can't be undone. This will permanently delete your data!!"})=> {
   return (
     <AlertDialog >
-      <AlertDialogTrigger asChild>
-            {children}
-      </AlertDialogTrigger>
+      {children}
       <AlertDialogContent className="w-3/4">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
