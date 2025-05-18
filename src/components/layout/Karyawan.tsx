@@ -10,6 +10,8 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Select,SelectTrigger,SelectContent,SelectGroup,SelectItem,SelectLabel,SelectValue } from "@/components/ui/select";
 import { isValidEmail,validateAndFormatPhoneNumber } from "@/helper/validator";
 import { toast } from "sonner"
+import DialogAlert from "@/components/common/DialogAlertOverlay";
+
 
 const data = [
     { id: 1475, nama: "Rina", gender: "Perempuan", email: "rina@example.com", no_telepon: "081234567890" },
@@ -26,6 +28,12 @@ const data = [
 
 const Karyawan: React.FC = () => {
     const [addKaryawanState,setAddKaryawanState] = useState({
+        nama:"",
+        email:"",
+        telp:"",
+        jenis_kelamin:""
+    })
+    const [editKaryawanState,seteditKaryawanState] = useState({
         nama:"",
         email:"",
         telp:"",
@@ -187,8 +195,54 @@ const Karyawan: React.FC = () => {
 
                                 <TableCell className="text-slate-600">{item.gender}</TableCell>
                                 <TableCell className="flex items-center gap-3">
-                                    <Pencil className="text-slate-500 cursor-pointer" size={15} />
-                                    <Trash2 size={15} className="text-red-500 cursor-pointer" />
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                             <Pencil  className="text-slate-500 cursor-pointer" size={15} />
+                                        </DialogTrigger>
+                                <DialogOverlay data={{ title: "Tambah karyawan", description: "Masukan data karyawan", button: "Save",onSubmit:handleAddKaryawan }}>
+                            <div className="grid gap-4 py-4">
+                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
+                                        <Label htmlFor="nama" className="text-right ">
+                                        Nama</Label>
+                                     <Input required id="nama"  name="nama"  onChange={handleChange} placeholder="Masukkan nama" className="col-span-3 md:text-sm text-xs" />
+         
+                                </div>
+                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0  items-center gap-4">
+                                    <Label htmlFor="email" className="text-right">
+                                        Email
+                                    </Label>
+                                    <Input required id="email" name="email"  onChange={handleChange} placeholder="Masukkan email" className="col-span-3 md:text-sm text-xs" />
+                                </div>
+                                    <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0  items-center gap-4">
+                                    <Label htmlFor="telp" className="text-right">
+                                        No.Telp
+                                    </Label>
+                                    <Input id="telp" required name="telp" onChange={handleChange} placeholder="Masukkan nomer telephone" className="col-span-3 md:text-sm text-xs" />
+                                </div>
+                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0  items-center gap-4">
+                                    <Label htmlFor="Gender" className="text-right">
+                                        Gender
+                                    </Label>
+                                    <Select required onValueChange={handleGenderChange} >
+                                    <SelectTrigger className="w-[180px] ">
+                                        <SelectValue placeholder="Pilih jenis kelamin" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                        <SelectLabel >Jenis kelamin</SelectLabel>
+                                        <SelectItem value="pria">Pria</SelectItem>
+                                        <SelectItem value="perempuan">Perempuan</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </DialogOverlay>
+                                    </Dialog>
+                                    <DialogAlert>
+                                        <Trash2 size={15} className="text-red-500 cursor-pointer" />
+                                    </DialogAlert>
+
                                 </TableCell>
                             </TableRow>
                         ))}
