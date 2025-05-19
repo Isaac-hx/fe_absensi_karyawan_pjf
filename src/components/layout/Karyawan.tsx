@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ArrowUpDown, Search, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DialogOverlay from "@/components/common/DialogOverlay";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
@@ -12,7 +12,8 @@ import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
-
+import { data_karyawan } from "@/data/karyawan";
+import type { IKaryawan } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const data = [
@@ -29,6 +30,7 @@ const data = [
 ];
 
 const Karyawan: React.FC = () => {
+    const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
     const [addKaryawanState, setAddKaryawanState] = useState({
         nama: "",
         email: "",
@@ -41,8 +43,15 @@ const Karyawan: React.FC = () => {
         telp: "",
         jenis_kelamin: ""
     });
-    const [searchNameKaryawan, setSearchNameKaryawan] = useState(null);
+    const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
+    useEffect(()=>{
+        setDataKaryawan(data_karyawan.slice(0,20
 
+
+
+
+        ))
+    },[])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -241,7 +250,7 @@ const Karyawan: React.FC = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {data.map((item) => (
+                        {dataKaryawan.map((item) => (
                             <TableRow className="" key={item.id}>
                                 <TableCell className="font-medium p-4 ">{item.id}</TableCell>
                                 <TableCell className="text-slate-600">{item.nama}</TableCell>
