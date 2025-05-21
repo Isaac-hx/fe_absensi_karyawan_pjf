@@ -8,13 +8,13 @@ import { useEffect, useState } from "react";
 import DialogOverlay from "@/components/common/DialogOverlay";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
-import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
 import { users } from "@/data/user";
 import type { IUser } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 
 const User: React.FC = () => {
     const [dataUser,setDatauser] = useState<IUser[]>([])
@@ -209,6 +209,8 @@ const User: React.FC = () => {
                             <TableHead className="text-emerald-600">ID</TableHead>
                             <TableHead className="text-emerald-600">Username</TableHead>
                             <TableHead className="text-emerald-600">Status</TableHead>
+                            <TableHead className="text-emerald-600">Action</TableHead>
+
 
                         </TableRow>
                     </TableHeader>
@@ -217,7 +219,8 @@ const User: React.FC = () => {
                             <TableRow className="" key={item.id}>
                                 <TableCell className="font-medium p-4 ">{item.id}</TableCell>
                                 <TableCell className="text-slate-600">{item.username}</TableCell>
-                                <TableCell className="text-slate-600">{item.status}</TableCell>
+                                <TableCell className="text-slate-600"><Badge variant={item.status === "Active" ? "outline":"destructive" }>{item.status}</Badge> </TableCell>
+                                
                                 <TableCell >
                                     <div className="flex items-center gap-3">
                                         <Dialog>
