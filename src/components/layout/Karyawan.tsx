@@ -44,14 +44,10 @@ const Karyawan: React.FC = () => {
         jenis_kelamin: ""
     });
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
+    const [counterPage,setCounterPage] = useState(1)
     useEffect(()=>{
-        setDataKaryawan(data_karyawan.slice(0,20
-
-
-
-
-        ))
-    },[])
+        setDataKaryawan(data_karyawan.slice((counterPage-1)*10,10*counterPage))
+    },[counterPage])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -60,11 +56,11 @@ const Karyawan: React.FC = () => {
     };
 
     const handleSearchState = () => {
-        console.log(searchNameKaryawan);
+
     };
 
     const handleSortKaryawan = () => {
-        data.sort((a, b) => a.nama.localeCompare(b.nama));
+        setDataKaryawan(data.sort((a, b) => a.nama.localeCompare(b.nama)));
     };
 
  
@@ -125,6 +121,20 @@ const Karyawan: React.FC = () => {
         }
         console.log(editKaryawanState);
     };
+    const handlePreviousPage=(e:any)=>{
+        e.preventDefault()
+        if(counterPage === 1){
+            return
+        }
+        setCounterPage(counterPage-1)
+    }
+    const handleNextPage=(e:any)=>{
+        e.preventDefault()
+        if(counterPage === data_karyawan.length/10){
+            return
+        }
+        setCounterPage(counterPage+1)
+    }
 
     return (
         <div>
@@ -361,7 +371,7 @@ const Karyawan: React.FC = () => {
             </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay><p>dimas</p></PaginationOverlay>
+                    <PaginationOverlay total_data={data_karyawan.length} counter_data={counterPage} handlePreviousPage={handlePreviousPage} handleNextPage={handleNextPage} />
 
             </section>
         </div>

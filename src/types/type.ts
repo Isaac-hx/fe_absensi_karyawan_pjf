@@ -5,3 +5,9 @@ export interface IKaryawan{
     email: string,
     no_telepon: string
 }
+
+export interface IUser{
+    id:number,
+    username:string,
+    status: "Active" | "Inactive"
+}
