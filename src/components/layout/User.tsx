@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ArrowUpDown, Search, Pencil, Trash2 } from "lucide-react";
+import {  Search, Pencil, Trash2,ArrowDownWideNarrow } from "lucide-react";
 import { useEffect, useState } from "react";
 import DialogOverlay from "@/components/common/DialogOverlay";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -17,6 +17,8 @@ import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import {Download} from "lucide-react"
 import { useForm } from "react-hook-form";
+import { exportToExcel } from "@/helper/export";
+
 
 type AddUserFormValues = {
   username: string;
@@ -88,6 +90,11 @@ const User: React.FC = () => {
         handleSearchState();
     }
 };
+    const handleExportExcel= ()=>{
+        const res  = exportToExcel(dataUser)
+        alert(res)
+        
+    }
     return (
         <div>
             {/* Header layout */}
@@ -190,7 +197,7 @@ const User: React.FC = () => {
                             <Button
                             className="bg-slate-50 border border-emerald-500 shadow-sm text-emerald-500 text-xl hover:bg-emerald-100 cursor-pointer"
                             onClick={handleSortUser}>
-                            <ArrowUpDown />
+                            <ArrowDownWideNarrow />
                         </Button>
                         </TooltipOverlay>
                         </div>

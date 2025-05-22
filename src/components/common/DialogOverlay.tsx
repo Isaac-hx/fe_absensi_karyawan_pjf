@@ -1,7 +1,5 @@
 import { DialogContent,DialogHeader,DialogTitle,DialogFooter,DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import type React from "react";
 
 interface IDialogoverlay {
@@ -12,7 +10,7 @@ interface IDialogoverlay {
 
 const DialogOverlay:React.FC<IDialogoverlay> = ({data,children})=>{
   return(
-      <form onSubmit={data.handleSubmit(data.submit)}>
+      <form>
 
       <DialogContent className="w-3/4" >
         
@@ -26,7 +24,7 @@ const DialogOverlay:React.FC<IDialogoverlay> = ({data,children})=>{
           {children}
         {/* End Body */}
         <DialogFooter>
-          <Button  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button>
+          <Button onClick={data.handleSubmit(data.submit)}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button>
         </DialogFooter>
       </DialogContent>
       </form>

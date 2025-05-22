@@ -16,6 +16,9 @@ import { data_karyawan } from "@/data/karyawan";
 import type { IKaryawan } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useForm } from "react-hook-form";
+import { exportToExcel } from "@/helper/export";
+import { getAllKaryawan } from "@/services/karyawan";
+import Loading from "@/components/common/Loading";
 
 type KaryawanFormValues = {
   nama:string,
@@ -26,10 +29,10 @@ type KaryawanFormValues = {
 
 
 const Karyawan: React.FC = () => {
-    const [dataUser, setDataUser] = useState<IKaryawan[]>([]);
     const [counterPage, setCounterPage] = useState(1);
     const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
+    const [loading,setLoading] = useState(false)
 
     const {
         register: registerAdd,
@@ -47,7 +50,20 @@ const Karyawan: React.FC = () => {
   } = useForm<KaryawanFormValues>();
 
     useEffect(()=>{
-        setDataKaryawan(data_karyawan.slice((counterPage-1)*10,10*counterPage))
+        const fetchKaryawan = async ()=>{
+            setLoading(true)
+            try{
+                const data = await getAllKaryawan()
+                setDataKaryawan(data.slice((counterPage-1)*10,10*counterPage))
+            }catch(e){
+                alert(e)
+            }finally{
+                setLoading(false)
+            }
+
+
+        }
+        fetchKaryawan()
     },[counterPage])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -64,7 +80,7 @@ const Karyawan: React.FC = () => {
         setDataKaryawan([...dataKaryawan].sort((a, b) => a.nama.localeCompare(b.nama)));
     };
     const handleAddKaryawan = (data: KaryawanFormValues) => {
-
+        console.log("Berjalan")
         console.log("Add User Submitted:", data);
         resetAddForm();
     };
@@ -73,9 +89,6 @@ const Karyawan: React.FC = () => {
         console.log("Edit User Submitted:", data);
         resetAddForm();
     };
-
-
- 
 
 
 
@@ -94,8 +107,14 @@ const Karyawan: React.FC = () => {
         setCounterPage(counterPage+1)
     }
 
+    const handleExportExcel = ()=>{
+        const res = exportToExcel(dataKaryawan)
+        alert(res)
+    }
+
     return (
         <div>
+            {loading && <Loading/>}
             {/* Header layout */}
             <section className="my-2 p-2 flex justify-between">
                 <h2 className="font-medium text-lg">Karyawan List</h2>
@@ -170,7 +189,7 @@ const Karyawan: React.FC = () => {
                                         Gender
                                     </Label>
                                     <Select
-                                                 {...registerAdd("jenis_kelamin", { required: "Status is required" })}
+                                                 {...registerAdd("jenis_kelamin", { required: "jenis_kelamin is required" })}
                                     >
                                         <SelectTrigger className="w-[180px] ">
                                             <SelectValue placeholder="Pilih jenis kelamin" />
@@ -218,8 +237,8 @@ const Karyawan: React.FC = () => {
                     </Button>
                     </TooltipOverlay>
                         </div> 
-                                               <div>
-                            <Button className="bg-emerald-500 cursor-pointer hover:bg-emerald-600">Export to Excel <Download/></Button>
+                        <div>
+                            <Button onClick={handleExportExcel} className="bg-emerald-500 cursor-pointer hover:bg-emerald-600">Export to Excel <Download/></Button>
                        </div> 
                     </div>
    
@@ -243,7 +262,7 @@ const Karyawan: React.FC = () => {
                                 <TableCell className="text-slate-600">{item.nama}</TableCell>
                                 <TableCell className="text-slate-600">{item.email}</TableCell>
                                 <TableCell className="text-slate-600">{item.no_telepon}</TableCell>
-                                <TableCell className="text-slate-600">{item.gender}</TableCell>
+                                <TableCell className="text-slate-600">{item.jenis_kelamin}</TableCell>
                                 <TableCell >
                                     <div className="flex items-center gap-3">
                                         <Dialog>
