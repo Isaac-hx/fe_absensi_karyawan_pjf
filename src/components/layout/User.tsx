@@ -15,6 +15,8 @@ import { users } from "@/data/user";
 import type { IUser } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import {Download} from "lucide-react"
+
 
 const User: React.FC = () => {
     const [dataUser,setDatauser] = useState<IUser[]>([])
@@ -33,6 +35,7 @@ const User: React.FC = () => {
     // Load data first reload
     useEffect(()=>{
         setDatauser(users.slice((counterPage-1)*10,10*counterPage))
+        console.log(10*counterPage)
     },[counterPage])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -181,7 +184,7 @@ const User: React.FC = () => {
             </section>
 
             {/* Table list user */}
-            <section className="bg-white rounded-lg border space-y-2 py-2">
+            <section className="bg-white rounded-md border  py-2">
                 <div className="space-y-4 md:flex md:justify-between items-center p-4">
                     <div className="relative md:w-2/6">
                         <Search className="text-gray-400 text-xs absolute top-2 left-2 md:top-3 md:left-2" />
@@ -194,13 +197,20 @@ const User: React.FC = () => {
                             placeholder="Masukan nama user..."
                         />
                     </div>
-                    <TooltipOverlay text="Sort">                    
-                        <Button
-                        className="bg-slate-50 border border-emerald-500 shadow-sm text-emerald-500 text-xl hover:bg-emerald-100 cursor-pointer"
-                        onClick={handleSortuser}>
-                        <ArrowUpDown />
-                    </Button>
-                    </TooltipOverlay>
+                    <div className="flex gap-1">
+                        <div>  
+                            <TooltipOverlay text="Sort">                    
+                            <Button
+                            className="bg-slate-50 border border-emerald-500 shadow-sm text-emerald-500 text-xl hover:bg-emerald-100 cursor-pointer"
+                            onClick={handleSortuser}>
+                            <ArrowUpDown />
+                        </Button>
+                        </TooltipOverlay>
+                        </div>
+                       <div>
+                            <Button className="bg-emerald-500 cursor-pointer hover:bg-emerald-600">Export to Excel <Download/></Button>
+                       </div>
+                    </div>
 
                 </div>
                 <Table className="bg-white overflow-x-scroll">
@@ -215,7 +225,7 @@ const User: React.FC = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {users.map((item) => (
+                        {dataUser.map((item) => (
                             <TableRow className="" key={item.id}>
                                 <TableCell className="font-medium p-4 ">{item.id}</TableCell>
                                 <TableCell className="text-slate-600">{item.username}</TableCell>

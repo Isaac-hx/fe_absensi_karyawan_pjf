@@ -1,5 +1,5 @@
 import type React from "react";
-import { Clock, ClockAfternoon } from "@phosphor-icons/react";
+import { Clock, Clock4 } from "lucide-react";
 
 const CardHeader:React.FC =()=>{
     return(
@@ -13,7 +13,7 @@ const CardHeader:React.FC =()=>{
                                 <p className="text-xs font-semibold">Absen masuk : 05.00 AM - 10.00 AM</p>
                             </div>
                             <div className="flex p-1 items-center gap-1 bg-gray-100 rounded-full">
-                                <ClockAfternoon size={22} />
+                                <Clock4 size={22} />
                                 <p className="text-xs font-semibold">Absen pulang : 05.00 AM - 03.00 PM</p>
                             </div>
                         </div>

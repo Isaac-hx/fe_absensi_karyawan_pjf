@@ -15,6 +15,18 @@ const App: React.FC = () => {
       <Route index element={<KaryawanPage />} />
       <Route path="/login-admin" element={<Login />} />
 
+      {/* rute not protected -must be deleted */}
+         <Route
+        path="/dashboard-demo"
+        element={
+            <AdminPage />
+        }
+      >
+        <Route index element={<Dashboard/>} />
+        <Route path="karyawan" element={<Karyawan/>} />
+        <Route path="absensi" element={<h1>Ini Absensi</h1>} />
+        <Route path="users" element={<User/>} />
+      </Route>
       {/* Rute terlindungi */}
       <Route
         path="/dashboard-admin"

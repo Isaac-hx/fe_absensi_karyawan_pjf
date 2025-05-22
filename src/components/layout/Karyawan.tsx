@@ -226,7 +226,7 @@ const Karyawan: React.FC = () => {
             </section>
 
             {/* Table list karyawan */}
-            <section className="bg-white rounded-lg border space-y-2 py-2">
+            <section className="bg-white rounded-md border space-y-2 py-2">
                 <div className="space-y-4 md:flex md:justify-between items-center p-4">
                     <div className="relative md:w-2/6">
                         <Search className="text-gray-400 text-xs absolute top-2 left-2 md:top-3 md:left-2" />
@@ -248,7 +248,7 @@ const Karyawan: React.FC = () => {
                     </TooltipOverlay>
 
                 </div>
-                <Table className="bg-white overflow-x-scroll">
+                <Table className="bg-white overflow-scroll">
                     <TableHeader className="bg-slate-100">
                         <TableRow>
                             <TableHead className="text-emerald-600">ID</TableHead>

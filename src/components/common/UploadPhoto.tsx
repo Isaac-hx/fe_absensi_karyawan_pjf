@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Camera  } from "@phosphor-icons/react";
+import { Camera  } from "lucide-react";
 
 const PhotoInput:React.FC = ()=> {
   const [photo, setPhoto] = useState<string | null>(null);

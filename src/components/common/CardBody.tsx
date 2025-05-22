@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import Input from "./Input";
 import InputPhoto from "./PhotoInput";
-import { MapPin } from "@phosphor-icons/react";
+import { MapPin } from "lucide-react";
 import { AppContext } from "../context/AppContext";
 import SignaturePad from "./SignaturePad";
 import Swal from "sweetalert2";

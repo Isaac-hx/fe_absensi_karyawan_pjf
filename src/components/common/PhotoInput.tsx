@@ -1,5 +1,5 @@
 import type React from "react";
-import { Camera } from "@phosphor-icons/react";
+import { Camera } from "lucide-react";
 import Input from "./Input";
 import { AppContext } from "../context/AppContext";
 import { useContext } from "react";

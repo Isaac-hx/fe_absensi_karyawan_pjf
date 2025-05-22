@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/card";
 
 import { Users } from "lucide-react";
-import TextLabel from "../common/TextLabel";
 const Dashboard: React.FC = () => {
   return (
     <div className="">
