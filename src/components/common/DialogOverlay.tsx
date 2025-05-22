@@ -12,8 +12,10 @@ interface IDialogoverlay {
 
 const DialogOverlay:React.FC<IDialogoverlay> = ({data,children})=>{
   return(
-      
+      <form onSubmit={data.handleSubmit(data.submit)}>
+
       <DialogContent className="w-3/4" >
+        
         <DialogHeader>
           <DialogTitle className="text-left">{data.title}</DialogTitle>
           <DialogDescription className="text-left">
@@ -24,9 +26,11 @@ const DialogOverlay:React.FC<IDialogoverlay> = ({data,children})=>{
           {children}
         {/* End Body */}
         <DialogFooter>
-          <Button onClick={data.onSubmit} className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button>
+          <Button  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button>
         </DialogFooter>
       </DialogContent>
+      </form>
+
   )
 }
 

@@ -16,102 +16,78 @@ import type { IUser } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import {Download} from "lucide-react"
+import { useForm } from "react-hook-form";
 
+type AddUserFormValues = {
+  username: string;
+  password: string;
+  confirm_password: string;
+};
+
+type EditUserFormValues = {
+  username: string;
+  status: string;
+};
 
 const User: React.FC = () => {
-    const [dataUser,setDatauser] = useState<IUser[]>([])
-    const [addUserState, setAdduserState] = useState({
-        username: "",
-        password:"",
-        confirm_password:""
-    });
-    const [editUserState, setEdituserState] = useState({
-       username:"",
-       status:""
-    });
-    const [searchNameUser, setSearchNameuser] = useState("");
-    const [counterPage,setCounterPage] = useState(1)
-    
-    // Load data first reload
-    useEffect(()=>{
-        setDatauser(users.slice((counterPage-1)*10,10*counterPage))
-        console.log(10*counterPage)
-    },[counterPage])
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleSearchState();
-        }
-    };
+  const [dataUser, setDataUser] = useState<IUser[]>([]);
+  const [counterPage, setCounterPage] = useState(1);
+  const [searchNameuser,setSearchNameuser] = useState("")
+  // Add User Form
+  const {
+    register: registerAdd,
+    handleSubmit: handleAddSubmit,
+    formState: { errors: addErrors },
+    watch:watchAdd,
+    reset: resetAddForm,
+  } = useForm<AddUserFormValues>();
 
-    const handleSearchState = () => {
+  // Edit User Form
+  const {
+    register: registerEdit,
+    handleSubmit: handleEditSubmit,
+    formState: { errors: editErrors },
+    reset: resetEditForm,
+  } = useForm<EditUserFormValues>();
 
-    };
+  useEffect(() => {
+    setDataUser(users.slice((counterPage - 1) * 10, 10 * counterPage));
+  }, [counterPage]);
 
-    const handleSortuser = () => {
-        setDatauser(dataUser.sort((a, b) => a.username.localeCompare(b.username)));
-    };
-
- 
-
-    const handleChange = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-        stateKey: string
-    ) => {
-        const { name, value } = event.target;
-
-        if (!name) return;
-
-        if (stateKey === "edit") {
-            setEdituserState((prevData) => ({
-                ...prevData,
-                [name]: value,
-            }));
-            return;
-        }
-
-        setAdduserState((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleAdduser = () => {
-        console.log("Tambah user");
-        if (!addUserState.username || !addUserState.password || !addUserState.confirm_password) {
-            alert("Input can't be empty!!");
-            return;
-        }
-
-        console.log(addUserState)
-    };
-
-    const handleEdituser = () => {
-        if (!editUserState.username || !editUserState.status ) {
-            alert("Input can't be empty!!");
-            return;
-        }
-        if (editUserState.status !== "Active" && editUserState.status !== "Inactive" ){
-            alert("Status invalid")
-            return
-        }
-        console.log(editUserState);
-    };
-    const handlePreviousPage=(e:any)=>{
-        e.preventDefault()
-        if(counterPage === 1){
-            return
-        }
-        setCounterPage(counterPage-1)
+  const handleAddUser = (data: AddUserFormValues) => {
+    if (data.password !== data.confirm_password) {
+      alert("Passwords do not match!");
+      return;
     }
-    const handleNextPage=(e:any)=>{
-        e.preventDefault()
-        if(counterPage === users.length/10){
-            return
-        }
-        setCounterPage(counterPage+1)
-    }
+    console.log("Add User Submitted:", data);
+    resetAddForm();
+  };
 
+  const handleEditUser = (data: EditUserFormValues) => {
+    console.log("Edit User Submitted:", data);
+    resetEditForm();
+  };
+
+  const handleSortUser = () => {
+    setDataUser([...dataUser].sort((a, b) => a.username.localeCompare(b.username)));
+  };
+
+  const handlePreviousPage = () => {
+    if (counterPage > 1) setCounterPage(counterPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (counterPage < users.length / 10) setCounterPage(counterPage + 1);
+  };
+  const handleSearchState = ()=>{
+    console.log(searchNameuser)
+  }
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleSearchState();
+    }
+};
     return (
         <div>
             {/* Header layout */}
@@ -130,7 +106,8 @@ const User: React.FC = () => {
                                 title: "Tambah user",
                                 description: "Masukan data user",
                                 button: "Save",
-                                onSubmit: handleAdduser
+                                submit:handleAddUser,
+                                handleSubmit:handleAddSubmit
                             }}
                         >
                             <div className="grid gap-4 py-4">
@@ -139,27 +116,33 @@ const User: React.FC = () => {
                                         Username
                                     </Label>
                                     <Input
-                                        required
-                                        id="username"
-                                        name="username"
-                                        onChange={(e) => { handleChange(e, "add"); }}
+                                                {...registerAdd("username", {
+                                            required: "Username can't be empty",
+                                            minLength: { value: 5, message: "Username must be at least 5 characters" },
+                                        })}
                                         placeholder="Masukkan username"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
+                                    {addErrors.username &&(
+                                        <p className="text-red-500 text-xs">{addErrors.username.message}</p>
+                                    )}
                                 </div>
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="password" className="text-right">
                                         Password
                                     </Label>
                                     <Input
-                                        required
-                                        id="password"
-                                        name="password"
+                                    {...registerAdd("password", {
+                                        required: "Password is required",
+                                        minLength: { value: 6, message: "Password must be at least 6 characters" },
+                                    })}
                                         type="password"
-                                        onChange={(e) => { handleChange(e, "add"); }}
                                         placeholder="Masukkan password"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
+                                    {addErrors.password &&(
+                                        <p className="text-red-500 text-xs">{addErrors.password.message}</p>
+                                    )}
                                 </div>
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="confirm_password" className="text-right">
@@ -167,12 +150,16 @@ const User: React.FC = () => {
                                     </Label>
                                     <Input
                                         required
-                                        id="confirm_password"
-                                        name="confirm_password"
-                                        onChange={(e) => { handleChange(e, "add"); }}
+                                        {...registerAdd("confirm_password", {
+                                            required: "Confirm password is required",
+                                            validate: (value) => value === watchAdd("password") || "Passwords do not match",
+                                        })}
                                         placeholder="Masukkan ulang password"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
+                                    {addErrors.confirm_password &&(
+                                        <p className="text-red-500 text-xs">{addErrors.confirm_password.message}</p>
+                                    )}
                                 </div>
 
                         
@@ -202,7 +189,7 @@ const User: React.FC = () => {
                             <TooltipOverlay text="Sort">                    
                             <Button
                             className="bg-slate-50 border border-emerald-500 shadow-sm text-emerald-500 text-xl hover:bg-emerald-100 cursor-pointer"
-                            onClick={handleSortuser}>
+                            onClick={handleSortUser}>
                             <ArrowUpDown />
                         </Button>
                         </TooltipOverlay>
@@ -246,7 +233,8 @@ const User: React.FC = () => {
                                                     title: "Edit user",
                                                     description: "Edit data user",
                                                     button: "Save",
-                                                    onSubmit: handleEdituser
+                                                    submit:handleEditUser,
+                                                    handleSubmit: handleEditSubmit
                                                 }}
                                             >
                                                 <div className="grid gap-4 py-4">
@@ -255,34 +243,39 @@ const User: React.FC = () => {
                                                             Username
                                                         </Label>
                                                         <Input
-                                                            required
-                                                            id="username"
-                                                            defaultValue={"Dimas ananda riyadi"}
-                                                            name="username"
-                                                            onChange={(e) => { handleChange(e, "edit"); }}
-                                                            placeholder="Masukkan username"
+                                                            {...registerEdit("username", {
+                                                            required: "Username can't be empty",
+                                                            minLength: { value: 5, message: "Username must be at least 5 characters" },
+                                                            })}
+                                                            placeholder="Edit username"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
+                                                                                 {editErrors.username && (
+                            <p className="text-red-500 text-xs">{editErrors.username.message}</p>
+                          )}
                                                     </div>
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="status" className="text-right">
                                                             Status
                                                         </Label>
                                                     <Select
-                                                        required
-                                                        onValueChange={(value) =>
-                                                        setEdituserState((prev) => ({ ...prev, status: value }))} >
+
+                                                        {...registerEdit("status", { required: "Status is required" })}
+                                                        defaultValue="" >
                                                         <SelectTrigger className="w-[180px] ">
                                                            <SelectValue placeholder="Pilih status" />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                 <SelectGroup>
                                                                 <SelectLabel>Pilih status user</SelectLabel>
-                                                                <SelectItem value="pria">Active</SelectItem>
-                                                                <SelectItem value="perempuan">Inactive</SelectItem>
+                                                                <SelectItem value="Active">Active</SelectItem>
+                                                                <SelectItem value="Inactive">Inactive</SelectItem>
                                                                 </SelectGroup>
                                                                 </SelectContent>
                                                                 </Select>
+                                                                                          {editErrors.status && (
+                            <p className="text-red-500 text-xs">{editErrors.status.message}</p>
+                          )}
                                                     </div>
 
                                                 </div>
@@ -315,3 +308,7 @@ const User: React.FC = () => {
 };
 
 export default User;
+function watchAdd(arg0: string) {
+    throw new Error("Function not implemented.");
+}
+

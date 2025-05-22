@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ArrowUpDown, Search, Pencil, Trash2 } from "lucide-react";
+import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import DialogOverlay from "@/components/common/DialogOverlay";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -15,36 +15,37 @@ import PaginationOverlay from "@/components/common/PaginationOverlay";
 import { data_karyawan } from "@/data/karyawan";
 import type { IKaryawan } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useForm } from "react-hook-form";
 
-const data = [
-    { id: 1475, nama: "Rina", gender: "Perempuan", email: "rina@example.com", no_telepon: "081234567890" },
-    { id: 4685, nama: "Agus", gender: "Laki-laki", email: "agus@example.com", no_telepon: "081234567891" },
-    { id: 7145, nama: "Wawan", gender: "Perempuan", email: "wawan@example.com", no_telepon: "081234567892" },
-    { id: 9983, nama: "Yuni", gender: "Laki-laki", email: "yuni@example.com", no_telepon: "081234567893" },
-    { id: 8521, nama: "Indra", gender: "Perempuan", email: "indra@example.com", no_telepon: "081234567894" },
-    { id: 4744, nama: "Surya", gender: "Laki-laki", email: "surya@example.com", no_telepon: "081234567895" },
-    { id: 6908, nama: "Budi", gender: "Laki-laki", email: "budi@example.com", no_telepon: "081234567896" },
-    { id: 1367, nama: "Dewi", gender: "Laki-laki", email: "dewi@example.com", no_telepon: "081234567897" },
-    { id: 4011, nama: "Yuni", gender: "Laki-laki", email: "yuni2@example.com", no_telepon: "081234567898" },
-    { id: 8548, nama: "Budi", gender: "Perempuan", email: "budi2@example.com", no_telepon: "081234567899" },
-];
+type KaryawanFormValues = {
+  nama:string,
+  email:string,
+  telp:string,
+  jenis_kelamin:string,
+};
+
 
 const Karyawan: React.FC = () => {
+    const [dataUser, setDataUser] = useState<IKaryawan[]>([]);
+    const [counterPage, setCounterPage] = useState(1);
     const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
-    const [addKaryawanState, setAddKaryawanState] = useState({
-        nama: "",
-        email: "",
-        telp: "",
-        jenis_kelamin: ""
-    });
-    const [editKaryawanState, setEditKaryawanState] = useState({
-        nama: "",
-        email: "",
-        telp: "",
-        jenis_kelamin: ""
-    });
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
-    const [counterPage,setCounterPage] = useState(1)
+
+    const {
+        register: registerAdd,
+        handleSubmit:handleAddSubmit ,
+        formState: { errors: addErrors },
+        watch:watchAdd,
+        reset: resetAddForm,
+    } = useForm<KaryawanFormValues>();
+    
+  const {
+    register: registerEdit,
+    handleSubmit: handleEditSubmit,
+    formState: { errors: editErrors },
+    reset: resetEditForm,
+  } = useForm<KaryawanFormValues>();
+
     useEffect(()=>{
         setDataKaryawan(data_karyawan.slice((counterPage-1)*10,10*counterPage))
     },[counterPage])
@@ -60,67 +61,24 @@ const Karyawan: React.FC = () => {
     };
 
     const handleSortKaryawan = () => {
-        setDataKaryawan(data.sort((a, b) => a.nama.localeCompare(b.nama)));
+        setDataKaryawan([...dataKaryawan].sort((a, b) => a.nama.localeCompare(b.nama)));
     };
+    const handleAddKaryawan = (data: KaryawanFormValues) => {
+
+        console.log("Add User Submitted:", data);
+        resetAddForm();
+    };
+    const handleEditKaryawan = (data: KaryawanFormValues) => {
+
+        console.log("Edit User Submitted:", data);
+        resetAddForm();
+    };
+
 
  
 
-    const handleChange = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-        stateKey: string
-    ) => {
-        const { name, value } = event.target;
 
-        if (!name) return;
 
-        if (stateKey === "edit") {
-            setEditKaryawanState((prevData) => ({
-                ...prevData,
-                [name]: value,
-            }));
-            return;
-        }
-
-        setAddKaryawanState((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleAddKaryawan = () => {
-        console.log("Tambah karyawan");
-        if (!addKaryawanState.nama || !addKaryawanState.email || !addKaryawanState.telp) {
-            alert("Input can't be empty!!");
-            return;
-        }
-        if (!isValidEmail(addKaryawanState.email)) {
-            alert("Invalid email address!!");
-            return;
-        }
-        const validPhone = validateAndFormatPhoneNumber(addKaryawanState.telp);
-        if (!validPhone || null) {
-            alert("Invalid nomer phone!!");
-            return;
-        }
-        console.log(addKaryawanState)
-    };
-
-    const handleEditKaryawan = () => {
-        if (!editKaryawanState.nama || !editKaryawanState.email || !editKaryawanState.telp) {
-            alert("Input can't be empty!!");
-            return;
-        }
-        if (!isValidEmail(editKaryawanState.email)) {
-            alert("Invalid email address!!");
-            return;
-        }
-        const validPhone = validateAndFormatPhoneNumber(editKaryawanState.telp);
-        if (!validPhone || null) {
-            alert("Invalid nomer phone!!");
-            return;
-        }
-        console.log(editKaryawanState);
-    };
     const handlePreviousPage=(e:any)=>{
         e.preventDefault()
         if(counterPage === 1){
@@ -154,7 +112,8 @@ const Karyawan: React.FC = () => {
                                 title: "Tambah karyawan",
                                 description: "Masukan data karyawan",
                                 button: "Save",
-                                onSubmit: handleAddKaryawan
+                                submit:handleAddKaryawan,
+                                handleSubmit: handleAddSubmit
                             }}
                         >
                             <div className="grid gap-4 py-4">
@@ -163,49 +122,55 @@ const Karyawan: React.FC = () => {
                                         Nama
                                     </Label>
                                     <Input
-                                        required
-                                        id="nama"
-                                        name="nama"
-                                        onChange={(e) => { handleChange(e, "add"); }}
+                                        {...registerAdd("nama", {
+                                            required: "nama can't be empty",
+                                            minLength: { value: 5, message: "nama must be at least 5 characters" },
+                                        })}
                                         placeholder="Masukkan nama"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
+                                    {addErrors.nama &&(
+                                        <p className="text-red-500 text-xs">{addErrors.nama.message}</p>
+                                    )}
                                 </div>
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="email" className="text-right">
                                         Email
                                     </Label>
                                     <Input
-                                        required
-                                        id="email"
-                                        name="email"
-                                        onChange={(e) => { handleChange(e, "add"); }}
+                                        {...registerAdd("email", {
+                                            required: "email can't be empty",
+                                            validate: (value) => isValidEmail(value) || "Invalid email address",
+                                        })}        
                                         placeholder="Masukkan email"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
+                                    {addErrors.email &&(
+                                        <p className="text-red-500 text-xs">{addErrors.email.message}</p>
+                                    )}
                                 </div>
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="telp" className="text-right">
                                         No.Telp
                                     </Label>
                                     <Input
-                                        id="telp"
-                                        required
-                                        name="telp"
-                                        onChange={(e) => { handleChange(e, "add"); }}
+                                    {...registerAdd("telp", {
+                                            required: "telp can't be empty",
+                                            validate: (value) => validateAndFormatPhoneNumber(value) || "Invalid phone number",
+                                        })}   
                                         placeholder="Masukkan nomer telephone"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
+                                    {addErrors.telp &&(
+                                        <p className="text-red-500 text-xs">{addErrors.telp.message}</p>
+                                    )}
                                 </div>
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="Gender" className="text-right">
                                         Gender
                                     </Label>
                                     <Select
-                                        required
-                                        onValueChange={(value) =>
-                                            setAddKaryawanState((prev) => ({ ...prev, jenis_kelamin: value }))
-                                        }
+                                                 {...registerAdd("jenis_kelamin", { required: "Status is required" })}
                                     >
                                         <SelectTrigger className="w-[180px] ">
                                             <SelectValue placeholder="Pilih jenis kelamin" />
@@ -218,6 +183,9 @@ const Karyawan: React.FC = () => {
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    {addErrors.jenis_kelamin &&(
+                                        <p className="text-red-500 text-xs">{addErrors.jenis_kelamin.message}</p>
+                                    )}
                                 </div>
                             </div>
                         </DialogOverlay>
@@ -239,13 +207,22 @@ const Karyawan: React.FC = () => {
                             placeholder="Masukan nama karyawan..."
                         />
                     </div>
-                    <TooltipOverlay text="Sort">                    
+                    <div className="flex gap-1">
+                        <div>
+                        <TooltipOverlay text="Sort">                    
                         <Button
                         className="bg-slate-50 border border-emerald-500 shadow-sm text-emerald-500 text-xl hover:bg-emerald-100 cursor-pointer"
                         onClick={handleSortKaryawan}>
-                        <ArrowUpDown />
+                    
+                        <ArrowDownWideNarrow />
                     </Button>
                     </TooltipOverlay>
+                        </div> 
+                                               <div>
+                            <Button className="bg-emerald-500 cursor-pointer hover:bg-emerald-600">Export to Excel <Download/></Button>
+                       </div> 
+                    </div>
+   
 
                 </div>
                 <Table className="bg-white overflow-scroll">
@@ -282,7 +259,8 @@ const Karyawan: React.FC = () => {
                                                     title: "Edit karyawan",
                                                     description: "Edit data karyawan",
                                                     button: "Save",
-                                                    onSubmit: handleEditKaryawan
+                                                    submit:handleEditKaryawan,
+                                                    handleSubmit: handleEditSubmit
                                                 }}
                                             >
                                                 <div className="grid gap-4 py-4">
@@ -291,40 +269,48 @@ const Karyawan: React.FC = () => {
                                                             Nama
                                                         </Label>
                                                         <Input
-                                                            required
-                                                            id="nama"
-                                                            defaultValue={"Dimas ananda riyadi"}
-                                                            name="nama"
-                                                            onChange={(e) => { handleChange(e, "edit"); }}
+                                                            {...registerEdit("nama", {
+                                                            required: "Nama can't be empty",
+                                                            minLength: { value: 5, message: "nama must be at least 5 characters" },
+                                                            })}
                                                             placeholder="Masukkan nama"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
+                                                    {editErrors.nama &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.nama.message}</p>
+                                                    )}                                               
                                                     </div>
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="email" className="text-right">
                                                             Email
                                                         </Label>
                                                         <Input
-                                                            required
-                                                            id="email"
-                                                            name="email"
-                                                            onChange={(e) => { handleChange(e, "edit"); }}
+                                                            {...registerEdit("email", {
+                                                            required: "Email can't be empty",
+                                                            validate: (value) => isValidEmail(value) || "Invalid email address",
+                                                            })}
                                                             placeholder="Masukkan email"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
+                                                     {editErrors.email &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.email.message}</p>
+                                                    )}       
                                                     </div>
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="telp" className="text-right">
                                                             No.Telp
                                                         </Label>
                                                         <Input
-                                                            id="telp"
-                                                            required
-                                                            name="telp"
-                                                            onChange={(e) => { handleChange(e, "edit"); }}
+                                                            {...registerEdit("telp", {
+                                                            required: "No.Telp can't be empty",
+                                                            validate: (value) => validateAndFormatPhoneNumber(value) || "Invalid phone number",
+                                                            })}
                                                             placeholder="Masukkan nomer telephone"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
+                                                        {editErrors.telp &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.telp.message}</p>
+                                                    )}
                                                     </div>
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="Gender" className="text-right">
@@ -333,9 +319,7 @@ const Karyawan: React.FC = () => {
                                                         <Select
                                                             required
                                                             defaultValue="pria"
-                                                            onValueChange={(value) =>
-                                                                setEditKaryawanState((prev) => ({ ...prev, jenis_kelamin: value }))
-                                                            }
+                                                        {...registerEdit("jenis_kelamin", { required: "Jenis Kelamin is required" })}
                                                         >
                                                             <SelectTrigger className="w-[180px] ">
                                                                 <SelectValue placeholder="Pilih jenis kelamin" />
@@ -348,6 +332,9 @@ const Karyawan: React.FC = () => {
                                                                 </SelectGroup>
                                                             </SelectContent>
                                                         </Select>
+                                                        {editErrors.jenis_kelamin &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.jenis_kelamin.message}</p>
+                                                    )}
                                                     </div>
                                                 </div>
                                             </DialogOverlay>
