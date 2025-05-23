@@ -2,7 +2,7 @@ import type { IKaryawan, IUser } from "@/types/type";
 import axiosInstance from "axios"
 
 
-const url = "https://run.mocky.io/v3/2afb4572-95dd-4045-8075-fd90db489566"
+const url = "https://run.mocky.io/v3/c3b00f74-d6fc-4dd0-a7d8-ee3a0c23311b"
 
 export const getAllKaryawan = async ():Promise<IKaryawan[]> => {
     try {

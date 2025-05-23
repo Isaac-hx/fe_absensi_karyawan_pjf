@@ -1,11 +1,12 @@
 import React, { useEffect, useContext, useState } from "react";
 import Input from "./Input";
-import InputPhoto from "./PhotoInput";
 import { MapPin } from "lucide-react";
 import { AppContext } from "../context/AppContext";
 import SignaturePad from "./SignaturePad";
 import Swal from "sweetalert2";
-
+import Webcam from "react-webcam";
+import CameraDialog from "./CameraDialog";
+import PhotoInput from "./UploadPhoto";
 interface ICardBody {
   sigCanvas: React.RefObject<any>;
 }
@@ -109,9 +110,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
           />
         </div>
         <div>
-          <InputPhoto
-            handlePhotoChange={handlePhotoChange}
-          />
+         <PhotoInput/>
         </div>
         
         <div className="relative">
@@ -123,7 +122,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
     value={data?.location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
     readonly={true}    
           />
-          <MapPin className="absolute top-2/3 right-3 md:top-[24%] transform -tranemerald-y-1/2 text-gray-500" />
+          <MapPin className="absolute top- right-3 md:top-[18%] transform -tranemerald-y-1/2 text-gray-500" />
         </div>
         {showTargetWork &&
                 <div className="md:col-span-2">

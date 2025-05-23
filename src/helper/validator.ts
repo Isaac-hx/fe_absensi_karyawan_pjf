@@ -3,13 +3,13 @@ export function isValidEmail(email: string): boolean {
     return emailRegex.test(email);
 }
 
-export function validateAndFormatPhoneNumber(phone: string): string | null {
+export function validateAndFormatPhoneNumber(phone: string): boolean {
     // Regex untuk validasi nomor HP Indonesia
     const phoneRegex = /^(?:\+62|62|0)[2-9][0-9]{8,12}$/;
 
     // Validasi apakah nomor sesuai dengan regex
     if (!phoneRegex.test(phone)) {
-        return null; // Tidak valid
+        return false; // Tidak valid
     }
 
     // Ganti prefix 0 atau 62 menjadi +62
@@ -21,9 +21,8 @@ export function validateAndFormatPhoneNumber(phone: string): string | null {
 
     // Pastikan panjang nomor minimal 13 karakter
     if (phone.length < 13) {
-        return null; // Tidak valid karena terlalu pendek
+        return false; // Tidak valid karena terlalu pendek
     }
 
-    return phone; // Nomor dalam format +62
+    return true; // Nomor valid
 }
-

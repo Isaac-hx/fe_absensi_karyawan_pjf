@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import KaryawanPage from "./pages/KaryawanPage";
 import { Routes, Route } from "react-router";
 import AdminPage from "./pages/AdminPage";
@@ -8,8 +8,10 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./components/layout/Login";
 import User from "./components/layout/User";
 
+
 const App: React.FC = () => {
   return (
+
     <Routes>
       {/* Rute terbuka */}
       <Route index element={<KaryawanPage />} />

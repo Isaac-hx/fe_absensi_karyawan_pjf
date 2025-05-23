@@ -202,7 +202,7 @@ const User: React.FC = () => {
                         </TooltipOverlay>
                         </div>
                        <div>
-                            <Button className="bg-emerald-500 cursor-pointer hover:bg-emerald-600">Export to Excel <Download/></Button>
+                            <Button onClick={handleExportExcel} className="bg-emerald-500 cursor-pointer hover:bg-emerald-600">Export to Excel <Download/></Button>
                        </div>
                     </div>
 
@@ -315,7 +315,4 @@ const User: React.FC = () => {
 };
 
 export default User;
-function watchAdd(arg0: string) {
-    throw new Error("Function not implemented.");
-}
 

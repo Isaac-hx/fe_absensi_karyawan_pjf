@@ -5,6 +5,8 @@ interface UtilityContextType {
   setActiveSidebar: (state: boolean) => void; // Fungsi menerima argumen boolean
   menuState:string
   setMenuState:(state:string)=>void
+  loading:boolean
+  setLoading:(state:boolean)=>void
 }
 export const UtilityContext = createContext<UtilityContextType>({
   activeSidebar: false,
@@ -12,18 +14,21 @@ export const UtilityContext = createContext<UtilityContextType>({
     // Default fungsi kosong  
   },
   menuState:"",
-  setMenuState:()=>{}
+  setMenuState:()=>{},
+
+  loading:false,
+  setLoading:()=>{}
 });
 
 
 export const UtilityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   
   const [activeSidebar, setActiveSidebar] = useState<boolean>(true);
-    const [menuState, setMenuState] = useState<string>("");
-
+  const [menuState, setMenuState] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   return (
-    <UtilityContext.Provider value={{activeSidebar,setActiveSidebar,menuState,setMenuState }}>
+    <UtilityContext.Provider value={{activeSidebar,setActiveSidebar,menuState,setMenuState,loading,setLoading }}>
       {children}
     </UtilityContext.Provider>
   );

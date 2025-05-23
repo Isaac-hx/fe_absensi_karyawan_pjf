@@ -38,7 +38,7 @@ const Karyawan: React.FC = () => {
         register: registerAdd,
         handleSubmit:handleAddSubmit ,
         formState: { errors: addErrors },
-        watch:watchAdd,
+        setValue:setJenisKelamin,
         reset: resetAddForm,
     } = useForm<KaryawanFormValues>();
     
@@ -46,6 +46,7 @@ const Karyawan: React.FC = () => {
     register: registerEdit,
     handleSubmit: handleEditSubmit,
     formState: { errors: editErrors },
+
     reset: resetEditForm,
   } = useForm<KaryawanFormValues>();
 
@@ -73,13 +74,14 @@ const Karyawan: React.FC = () => {
     };
 
     const handleSearchState = () => {
-
+        console.log(searchNameKaryawan)
     };
 
     const handleSortKaryawan = () => {
         setDataKaryawan([...dataKaryawan].sort((a, b) => a.nama.localeCompare(b.nama)));
     };
     const handleAddKaryawan = (data: KaryawanFormValues) => {
+        alert("Muncul")
         console.log("Berjalan")
         console.log("Add User Submitted:", data);
         resetAddForm();
@@ -87,7 +89,7 @@ const Karyawan: React.FC = () => {
     const handleEditKaryawan = (data: KaryawanFormValues) => {
 
         console.log("Edit User Submitted:", data);
-        resetAddForm();
+        resetEditForm();
     };
 
 
@@ -114,7 +116,6 @@ const Karyawan: React.FC = () => {
 
     return (
         <div>
-            {loading && <Loading/>}
             {/* Header layout */}
             <section className="my-2 p-2 flex justify-between">
                 <h2 className="font-medium text-lg">Karyawan List</h2>
@@ -189,7 +190,8 @@ const Karyawan: React.FC = () => {
                                         Gender
                                     </Label>
                                     <Select
-                                                 {...registerAdd("jenis_kelamin", { required: "jenis_kelamin is required" })}
+                                        
+                                        onValueChange={(value)=>{setJenisKelamin("jenis_kelamin",value)}}
                                     >
                                         <SelectTrigger className="w-[180px] ">
                                             <SelectValue placeholder="Pilih jenis kelamin" />
@@ -202,13 +204,17 @@ const Karyawan: React.FC = () => {
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
-                                    {addErrors.jenis_kelamin &&(
+
+                                </div>
+                                                                    {addErrors.jenis_kelamin &&(
                                         <p className="text-red-500 text-xs">{addErrors.jenis_kelamin.message}</p>
                                     )}
-                                </div>
                             </div>
+                            
                         </DialogOverlay>
+                        
                     </Dialog>
+                    
                 </div>
             </section>
 
