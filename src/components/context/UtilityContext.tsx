@@ -25,7 +25,7 @@ export const UtilityProvider: React.FC<{ children: React.ReactNode }> = ({ child
   
   const [activeSidebar, setActiveSidebar] = useState<boolean>(true);
   const [menuState, setMenuState] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <UtilityContext.Provider value={{activeSidebar,setActiveSidebar,menuState,setMenuState,loading,setLoading }}>

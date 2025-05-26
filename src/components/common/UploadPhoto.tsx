@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Camera  } from "lucide-react";
-import CameraDialog from "./CameraDialog";
+import Webcam from "react-webcam"
+import { Dialog,DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import DialogOverlay from "./DialogOverlay";
 
-const PhotoInput:React.FC = ()=> {
+const PhotoInput:React.FC<{webCamRef:React.RefObject<any>}> = ({webCamRef})=> {
   const [photo, setPhoto] = useState<string | null>(null);
 
-  // const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement> | null) => {
-  //   const file = e?.target?.files?.[0];
-  //   if (file) {
-  //     setPhoto(URL.createObjectURL(file));
-  //   }
-  // };
+
+const handleScreenshot = async () => {
+  if (webCamRef.current) {
+    // Type assertion to access getScreenshot method
+    const image = (webCamRef.current as Webcam).getScreenshot();
+    setPhoto(image);
+  }
+}
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -32,7 +37,27 @@ const PhotoInput:React.FC = ()=> {
 
         {/* sdsds */}
 
-        <CameraDialog/>
+      <Dialog>
+          <DialogTrigger asChild>
+              <Button className="bg-emerald-500 hover:bg-emerald-600 cursor-pointer" type="button">Ambil Foto</Button>
+          </DialogTrigger>
+          <DialogOverlay data={{
+              title:"Ambil foto",
+              description:"",
+              handleSubmit:(fn: () => void) => fn(),
+              submit:handleScreenshot,
+              button:"Ambil Foto"
+          }
+
+          } closeDialog={true}>
+              <div>
+              <Webcam 
+              screenshotFormat="image/jpeg"
+              ref={webCamRef}
+              mirrored={true}/>
+              </div>
+          </DialogOverlay>
+      </Dialog>
       </div>
     </div>
   );

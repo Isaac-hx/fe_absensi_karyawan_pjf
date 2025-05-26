@@ -1,4 +1,4 @@
-export const imageConvert = async (imageUrl: string): Promise<File> => {
+export const imageConvert = async (imageUrl: string ): Promise<File> => {
     try {
         // Fetch the image as a Blob
         const base64Response = await fetch(imageUrl);

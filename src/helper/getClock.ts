@@ -1,4 +1,4 @@
-export function getCurrentDateAndTime(): { date: string; time: string } {
+export function getCurrentDateAndTime(): string {
     const now = new Date();
     const year = String(now.getFullYear()).slice(-2); // Get last two digits of the year
     const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
@@ -7,8 +7,8 @@ export function getCurrentDateAndTime(): { date: string; time: string } {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    const date = `${day}/${month}/${year}`;
-    const time = `${hours}.${minutes}.${seconds}`;
+    const date_time = `${day}/${month}/${year} ${hours}.${minutes}.${seconds}`;
 
-    return { date, time };
+
+    return date_time;
 }

@@ -2,15 +2,16 @@ import Header from "@/components/common/Header"
 import SideBar from "@/components/common/Sidebar"
 import { Outlet } from "react-router"
 import { UtilityContext } from "@/components/context/UtilityContext";
-import Loading from "@/components/common/Loading";
 import { useContext } from "react";
+import Loading from "@/components/common/Loading";
 
 const AdminPage:React.FC = ()=>{
     const {loading} = useContext(UtilityContext)
     return(
         <>
-        {loading && <Loading/>}
             <Header />
+                {loading && <Loading/>}
+
             <div className="flex">
                 <div className="">
                     <SideBar/>

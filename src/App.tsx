@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import KaryawanPage from "./pages/KaryawanPage";
+import AbsenPage from "./pages/AbsenPage";
 import { Routes, Route } from "react-router";
 import AdminPage from "./pages/AdminPage";
 import Dashboard from "./components/layout/Dashboard";
@@ -14,7 +14,7 @@ const App: React.FC = () => {
 
     <Routes>
       {/* Rute terbuka */}
-      <Route index element={<KaryawanPage />} />
+      <Route index element={<AbsenPage />} />
       <Route path="/login-admin" element={<Login />} />
 
       {/* rute not protected -must be deleted */}

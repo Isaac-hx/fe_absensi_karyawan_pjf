@@ -1,22 +1,40 @@
 import React, { useEffect, useContext, useState } from "react";
-import Input from "./Input";
-import { MapPin } from "lucide-react";
+import { MapPin, Webcam } from "lucide-react";
 import { AppContext } from "../context/AppContext";
 import SignaturePad from "./SignaturePad";
 import Swal from "sweetalert2";
-import Webcam from "react-webcam";
-import CameraDialog from "./CameraDialog";
 import PhotoInput from "./UploadPhoto";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+import { Label } from "@/components/ui/label";
+
+import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { AbsenFormValues } from "@/data/absen";
+
+//Interface component
 interface ICardBody {
   sigCanvas: React.RefObject<any>;
+  webcamRef:React.RefObject<any>
+  register: UseFormRegister<AbsenFormValues>;
+  error:any;
+  setValue:UseFormSetValue<AbsenFormValues>
 }
 
-const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
+const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,webcamRef,setValue }) => {
     const { data, setData } = useContext(AppContext);
     const [showTargetWork,SetShowTargetWork] = useState(false)
-
+    const [location,setLocation] = useState("")
   // Get user's current location
   useEffect(() => {
+    /**
+     * Checks the current hour and updates the state to show the target work section
+     * if the current time is between 5 AM (inclusive) and 10 AM (exclusive).
+     *
+     * @remarks
+     * This function retrieves the current hour using `Date.getHours()` and calls
+     * `SetShowTargetWork` with `true` if the hour is between 5 and 9, otherwise `false`.
+     */
     const checkTime = ()=>{
         const currentHour = new Date().getHours()
         SetShowTargetWork(currentHour >= 5 && currentHour <10)
@@ -24,31 +42,30 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
     }
     checkTime()
     const interval = setInterval(checkTime,6000);
+  
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setData((prevData) => ({
-            ...prevData,
-            location: `Lat: ${latitude}, Lng: ${longitude}`,
-          }));
+          const locationValue = `Lat: ${latitude}, Lng: ${longitude}`;
+          setLocation(locationValue); // Perbarui state lokal
+          setValue("location", locationValue); // Perbarui nilai register
         },
         () => {
-          setData((prevData) => ({
-            ...prevData,
-            location: "Unable to detect location",
-          }));
+          const errorLocation = "Gagal mendapatkan lokasi!";
+          setLocation(errorLocation);
+          setValue("location", errorLocation); // Perbarui nilai register
         }
       );
     } else {
-      setData((prevData) => ({
-        ...prevData,
-        location: "Geolocation not supported in your browser!",
-      }));
+      const notSupported = "Geolocation not supported in your browser!";
+      setLocation(notSupported);
+      setValue("location", notSupported); // Perbarui nilai register
     }
+
     return () => clearInterval(interval);
 
-  }, [setData]);
+  }, [location]);
 
   // Clear signature canvas and reset signature image
   const handleClearSignature = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,93 +79,93 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas }) => {
     }
   };
 
-  // Handle photo input change
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target?.files?.[0];
-    console.log(file)
-    if (!file) {
-        return Swal.fire(
-            {title:"Format salah",icon:"error"}
-        )
-    }
 
-    setData((prevData) => ({
-        ...prevData,
-        file_profile: file, // Fixed to match the data structure
-        preview_photo:URL.createObjectURL(file)
-      }));
-  };
 
-  // Handle input or textarea changes
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+
 
   return (
     <>
       <div className="space-y-4 md:grid md:grid-cols-2 gap-2">
-        <div>
+        <div className="space-y-2">
+          <Label htmlFor="employee_id">
+            ID Karyawan
+          </Label>
           <Input
-            className="py-2 pl-1 ring-2 ring-emerald- rounded-md"
-            labelText="ID karyawan"
-            idInput="employee_id"
-            placeholder="Masukan ID Karyawan"
-            type="text"
+            className="border border-emerald-200 pl-3 pr-10 py-2 rounded-lg focus:ring-0 focus:border-0 w-full text-xs md:text-sm"
+              placeholder="Masukan ID Karyawan"
+            id="employee_id"
+            {...register("employee_id", {
+            required: "ID Karyawan can't be empty",
+            })}
             
-            onChangeInput={handleChange}
           />
+          {error.nama &&(
+            <p className="text-red-500 text-xs">{error.employee_id.message}</p>)}
         </div>
         <div>
+          <Label htmlFor="signature">
+            Tanda tangan karywan
+          </Label>
           <SignaturePad
-            textLabel="Tanda tangan karyawan"
             handleClearSignature={handleClearSignature}
             sigCanvas={sigCanvas}
           />
         </div>
         <div>
-         <PhotoInput/>
+         <PhotoInput webCamRef={webcamRef}/>
         </div>
         
-        <div className="relative">
+        <div className="relative space-y-2">
+          <Label htmlFor="location">
+            Lokasi saat ini
+          </Label>
+
           <Input
-    labelText="Lokasi saat ini"
-    idInput="current_location"
-    className="border border-emerald-200 pl-3 pr-10 py-2 rounded-lg w-full"
-    placeholder="Lokasi saat ini"
-    value={data?.location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
-    readonly={true}    
+          id="location"
+          className="border border-emerald-200 pl-3 pr-10 py-2 rounded-lg w-full text-xs md:text-sm"
+          placeholder="Lokasi saat ini"
+          value={location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
+          readOnly={true} 
+           {...register("location")} 
           />
-          <MapPin className="absolute top- right-3 md:top-[18%] transform -tranemerald-y-1/2 text-gray-500" />
+          <MapPin className="absolute  right-3 bottom-[8%]  md:top-0 md:top-[14%] transform -tranemerald-y-1/2 text-gray-500" />
         </div>
         {showTargetWork &&
-                <div className="md:col-span-2">
-                <Input
-                  labelText="Target Pekerjaan"
-                  idInput="target_work"
+                <div className="md:col-span-2 space-y-2">
+                <Label htmlFor="target_work">
+                    Target Pekerjaan
+                </Label>
+                <Textarea
+                  id="target_work"
                   placeholder="Masukan target Pekerjaan..."
-                  as="textarea"
-                  rows={6}
-                  onChangeInput={handleChange}
+                  rows={8}
+                  {...register("target_work", {
+                    required: "Target Pekerjaan can't be empty",
+                  })}
                 />
-              </div>
-        }
+                {error.target_work &&(
+                  <p className="text-red-500 text-xs">{error.target_work.message}</p>)}
+              </div>}
 
 
         {!showTargetWork && 
-                <div className="md:col-span-2">
-                <Input
-                  labelText="Hasil Pekerjaan"
-                  idInput="result_work"
+                <div className="md:col-span-2 space-y-2">
+                  <Label htmlFor="result_work">
+                    Hasil Pekerjaan
+                  </Label>
+                <Textarea
+                className="text-xs sm:text-sm"
+                  id="result_work"
                   placeholder="Masukan hasil Pekerjaan..."
-                  as="textarea"
                   rows={6}
-                  onChangeInput={handleChange}
+                  cols={10}
+                  {...register("result_work", {
+                    required: "Hasil Pekerjaan can't be empty",
+                  })}
                   
                 />
+                {error.result_work &&(
+                  <p className="text-red-500 text-xs">{error.result_work.message}</p>)}
               </div>}
 
       </div>

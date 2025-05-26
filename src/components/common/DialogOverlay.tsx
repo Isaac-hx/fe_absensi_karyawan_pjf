@@ -1,14 +1,15 @@
-import { DialogContent,DialogHeader,DialogTitle,DialogFooter,DialogDescription } from "@/components/ui/dialog";
+import { DialogContent,DialogHeader,DialogTitle,DialogFooter,DialogDescription,DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type React from "react";
 
 interface IDialogoverlay {
   children:React.ReactNode
   data: Record<string, any>;
+  closeDialog:boolean
 }
 
 
-const DialogOverlay:React.FC<IDialogoverlay> = ({data,children})=>{
+const DialogOverlay:React.FC<IDialogoverlay> = ({data,children,closeDialog})=>{
   return(
 
       <DialogContent className="w-3/4" >
@@ -23,7 +24,10 @@ const DialogOverlay:React.FC<IDialogoverlay> = ({data,children})=>{
           {children}
         {/* End Body */}
         <DialogFooter>
-          <Button onClick={data.handleSubmit(data.submit)}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button>
+          {closeDialog ? <DialogClose>
+          <Button onClick={()=>{data.handleSubmit(data.submit)}}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button></DialogClose> :<Button onClick={()=>{data.handleSubmit(data.submit)}}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">{data.button}</Button>}
+
+
         </DialogFooter>
       </DialogContent>
 

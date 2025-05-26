@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import DialogOverlay from "@/components/common/DialogOverlay";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
@@ -19,6 +19,8 @@ import { useForm } from "react-hook-form";
 import { exportToExcel } from "@/helper/export";
 import { getAllKaryawan } from "@/services/karyawan";
 import Loading from "@/components/common/Loading";
+import { UtilityContext } from "../context/UtilityContext";
+
 
 type KaryawanFormValues = {
   nama:string,
@@ -32,7 +34,7 @@ const Karyawan: React.FC = () => {
     const [counterPage, setCounterPage] = useState(1);
     const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
-    const [loading,setLoading] = useState(false)
+    const {setLoading} = useContext(UtilityContext)
 
     const {
         register: registerAdd,
@@ -51,8 +53,8 @@ const Karyawan: React.FC = () => {
   } = useForm<KaryawanFormValues>();
 
     useEffect(()=>{
+        setLoading(true)
         const fetchKaryawan = async ()=>{
-            setLoading(true)
             try{
                 const data = await getAllKaryawan()
                 setDataKaryawan(data.slice((counterPage-1)*10,10*counterPage))
@@ -61,7 +63,6 @@ const Karyawan: React.FC = () => {
             }finally{
                 setLoading(false)
             }
-
 
         }
         fetchKaryawan()
@@ -115,6 +116,7 @@ const Karyawan: React.FC = () => {
     }
 
     return (
+        
         <div>
             {/* Header layout */}
             <section className="my-2 p-2 flex justify-between">
@@ -135,6 +137,7 @@ const Karyawan: React.FC = () => {
                                 submit:handleAddKaryawan,
                                 handleSubmit: handleAddSubmit
                             }}
+                            closeDialog={false}
                         >
                             <div className="grid gap-4 py-4">
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
@@ -221,6 +224,7 @@ const Karyawan: React.FC = () => {
             {/* Table list karyawan */}
             <section className="bg-white rounded-md border space-y-2 py-2">
                 <div className="space-y-4 md:flex md:justify-between items-center p-4">
+                    
                     <div className="relative md:w-2/6">
                         <Search className="text-gray-400 text-xs absolute top-2 left-2 md:top-3 md:left-2" />
                         <Input
@@ -251,6 +255,7 @@ const Karyawan: React.FC = () => {
 
                 </div>
                 <Table className="bg-white overflow-scroll">
+
                     <TableHeader className="bg-slate-100">
                         <TableRow>
                             <TableHead className="text-emerald-600">ID</TableHead>
@@ -287,6 +292,7 @@ const Karyawan: React.FC = () => {
                                                     submit:handleEditKaryawan,
                                                     handleSubmit: handleEditSubmit
                                                 }}
+                                                closeDialog={false}
                                             >
                                                 <div className="grid gap-4 py-4">
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
