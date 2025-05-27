@@ -5,7 +5,7 @@ export const imageConvert = async (imageUrl: string ): Promise<File> => {
         const blob = await base64Response.blob();
 
         // Convert Blob to File
-        const file = new File([blob], "signature.png", { type: "image/png" });
+        const file = new File([blob], imageUrl.slice(0,5), { type: "image/png" });
 
         return file;
     } catch (error) {

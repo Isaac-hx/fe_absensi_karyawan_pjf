@@ -4,16 +4,15 @@ import Webcam from "react-webcam"
 import { Dialog,DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import DialogOverlay from "./DialogOverlay";
-
-const PhotoInput:React.FC<{webCamRef:React.RefObject<any>}> = ({webCamRef})=> {
-  const [photo, setPhoto] = useState<string | null>(null);
-
+const PhotoInput:React.FC<{photo:string | null,setPhoto:React.Dispatch<React.SetStateAction<string | null>>}> = ({photo,setPhoto})=> {
+    const webCamRef = useRef(null);
 
 const handleScreenshot = async () => {
   if (webCamRef.current) {
     // Type assertion to access getScreenshot method
-    const image = (webCamRef.current as Webcam).getScreenshot();
+    const image = (webCamRef.current as Webcam).getScreenshot()
     setPhoto(image);
+
   }
 }
 
@@ -46,10 +45,11 @@ const handleScreenshot = async () => {
               description:"",
               handleSubmit:(fn: () => void) => fn(),
               submit:handleScreenshot,
-              button:"Ambil Foto"
+              button:"Ambil Foto",
+        
           }
 
-          } closeDialog={true}>
+          } dialogCloseButton={true}>
               <div>
               <Webcam 
               screenshotFormat="image/jpeg"

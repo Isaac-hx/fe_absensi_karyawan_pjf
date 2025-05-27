@@ -15,13 +15,14 @@ import type { AbsenFormValues } from "@/data/absen";
 //Interface component
 interface ICardBody {
   sigCanvas: React.RefObject<any>;
-  webcamRef:React.RefObject<any>
   register: UseFormRegister<AbsenFormValues>;
   error:any;
   setValue:UseFormSetValue<AbsenFormValues>
+  photo:string | null;
+  setPhoto:React.Dispatch<React.SetStateAction<string | null>>
 }
 
-const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,webcamRef,setValue }) => {
+const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo,setPhoto}) => {
     const { data, setData } = useContext(AppContext);
     const [showTargetWork,SetShowTargetWork] = useState(false)
     const [location,setLocation] = useState("")
@@ -99,7 +100,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,webcamRef,setV
             })}
             
           />
-          {error.nama &&(
+          {error.employee_id &&(
             <p className="text-red-500 text-xs">{error.employee_id.message}</p>)}
         </div>
         <div>
@@ -112,7 +113,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,webcamRef,setV
           />
         </div>
         <div>
-         <PhotoInput webCamRef={webcamRef}/>
+         <PhotoInput  photo={photo} setPhoto={setPhoto}/>
         </div>
         
         <div className="relative space-y-2">
@@ -126,7 +127,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,webcamRef,setV
           placeholder="Lokasi saat ini"
           value={location || "Memuat lokasi..."} // Tambahkan fallback jika lokasi belum di-set
           readOnly={true} 
-           {...register("location")} 
+           {...register("location",{required:"Location can't be empty!,please refresh!!"})} 
           />
           <MapPin className="absolute  right-3 bottom-[8%]  md:top-0 md:top-[14%] transform -tranemerald-y-1/2 text-gray-500" />
         </div>

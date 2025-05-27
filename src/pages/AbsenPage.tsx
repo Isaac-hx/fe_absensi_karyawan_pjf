@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Card from "../components/layout/Card";
 import CardHeader from "../components/common/CardHeader";
 import { AppContext } from "../components/context/AppContext";
@@ -10,8 +10,11 @@ import { getCurrentDateAndTime } from "../helper/getClock";
 import { useForm } from "react-hook-form";
 import type {AbsenFormValues } from "@/data/absen";
 import {Button} from "@/components/ui/button"
+import Webcam from "react-webcam"
+
 const AbsenPage: React.FC = () => {
     const { data } = useContext(AppContext);
+    const [photo,setPhoto] = useState<string | null>("")
     
     /**
      * Reference to the signature canvas element.
@@ -19,7 +22,6 @@ const AbsenPage: React.FC = () => {
      * 
      */
     const sigCanvas = useRef<any>(null);
-    const webcamRef = useRef(null);
 
 
     const {
@@ -27,24 +29,27 @@ const AbsenPage: React.FC = () => {
        formState:{errors},
        handleSubmit,
        reset,
-       setValue
+       setValue,
+       getValues
     } = useForm<AbsenFormValues>();
     
     const onSubmitForm = async (data:AbsenFormValues) => {
-        console.log(data)
         // Ambil data tanda tangan
         const signatureData = sigCanvas.current?.toDataURL("image/png");
         const signatureImage = await imageConvert(signatureData)
         const date_time = getCurrentDateAndTime()
         
         //ambil data photo
-        const photoData = webcamRef.current?.getScreenshot()
-        const photoImage = await imageConvert(photoData)
+        const photoImage = await imageConvert(photo)
+        
+        console.log(photoImage)
+
 
         try{
             //Get url data from cloudinary
             const {url_profile,url_signature} = await postToCloudinary(photoImage,signatureImage)
             console.log(url_profile,url_signature)  
+            
             // const to_up = {
             //     id_employee:data.employee_id,
             //     url_profile:url_profile,
@@ -56,6 +61,13 @@ const AbsenPage: React.FC = () => {
  
             
             // }
+            setValue("url_profile", url_profile)
+            setValue("url_signature", url_signature)
+            setValue("create_date",date_time)
+            sigCanvas.current.clear()
+            setPhoto("")
+            const updatedValues = getValues();
+            console.log("Updated Values: ", updatedValues);
         } catch(error){
             return Swal.fire({
                 title: "Gagal absensi",
@@ -80,7 +92,7 @@ const AbsenPage: React.FC = () => {
                 {/* End Header section */}
                 <section>
                     <form onSubmit={handleSubmit(onSubmitForm)}>
-                        <CardBody  register={register} error={errors} sigCanvas={sigCanvas}  webcamRef={webcamRef} setValue={setValue}/>
+                        <CardBody  register={register} error={errors} sigCanvas={sigCanvas}   setValue={setValue} photo={photo} setPhoto={setPhoto}/>
                         <div className="flex justify-center">
                             <Button className="p-2 w-full cursor-pointer shadow-sm rounded-md bg-emerald-500 text-white txt-md md:text-lg  font-medium mt-2" type="submit">
                                 Absen

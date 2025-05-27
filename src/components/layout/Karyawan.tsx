@@ -137,7 +137,6 @@ const Karyawan: React.FC = () => {
                                 submit:handleAddKaryawan,
                                 handleSubmit: handleAddSubmit
                             }}
-                            closeDialog={false}
                         >
                             <div className="grid gap-4 py-4">
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
@@ -292,7 +291,6 @@ const Karyawan: React.FC = () => {
                                                     submit:handleEditKaryawan,
                                                     handleSubmit: handleEditSubmit
                                                 }}
-                                                closeDialog={false}
                                             >
                                                 <div className="grid gap-4 py-4">
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">

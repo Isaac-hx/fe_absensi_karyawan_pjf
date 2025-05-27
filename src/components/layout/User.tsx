@@ -116,7 +116,6 @@ const User: React.FC = () => {
                                 submit:handleAddUser,
                                 handleSubmit:handleAddSubmit
                             }}
-                            closeDialog={false}
                         >
                             <div className="grid gap-4 py-4">
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
@@ -244,7 +243,6 @@ const User: React.FC = () => {
                                                     submit:handleEditUser,
                                                     handleSubmit: handleEditSubmit
                                                 }}
-                                                closeDialog={false}
                                             >
                                                 <div className="grid gap-4 py-4">
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
