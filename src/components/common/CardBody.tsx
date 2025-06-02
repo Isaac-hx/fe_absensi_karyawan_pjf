@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import { Label } from "@/components/ui/label";
+import Signature from '@uiw/react-signature';
 
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import type { AbsenFormValues } from "@/data/absen";
@@ -69,15 +70,10 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
   }, [location]);
 
   // Clear signature canvas and reset signature image
-  const handleClearSignature = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (sigCanvas.current) {
-      sigCanvas.current.clear();
-      setData((prevData) => ({
-        ...prevData,
-        file_signature: null,
-      }));
-    }
+  const handleClearSignature = () => {
+    alert("dihapus")
+    sigCanvas.current.clear();
+
   };
 
 
@@ -103,9 +99,9 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
           {error.employee_id &&(
             <p className="text-red-500 text-xs">{error.employee_id.message}</p>)}
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="signature">
-            Tanda tangan karywan
+            Tanda tangan karyawan
           </Label>
           <SignaturePad
             handleClearSignature={handleClearSignature}
