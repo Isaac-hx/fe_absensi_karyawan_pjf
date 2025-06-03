@@ -2,13 +2,11 @@ import React, { useEffect, useContext, useState } from "react";
 import { MapPin, Webcam } from "lucide-react";
 import { AppContext } from "../context/AppContext";
 import SignaturePad from "./SignaturePad";
-import Swal from "sweetalert2";
 import PhotoInput from "./UploadPhoto";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import { Label } from "@/components/ui/label";
-import Signature from '@uiw/react-signature';
 
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import type { AbsenFormValues } from "@/data/absen";
@@ -56,13 +54,11 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
         () => {
           const errorLocation = "Gagal mendapatkan lokasi!";
           setLocation(errorLocation);
-          setValue("location", errorLocation); // Perbarui nilai register
         }
       );
     } else {
       const notSupported = "Geolocation not supported in your browser!";
       setLocation(notSupported);
-      setValue("location", notSupported); // Perbarui nilai register
     }
 
     return () => clearInterval(interval);
@@ -71,7 +67,6 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
 
   // Clear signature canvas and reset signature image
   const handleClearSignature = () => {
-    alert("dihapus")
     sigCanvas.current.clear();
 
   };

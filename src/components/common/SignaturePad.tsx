@@ -18,7 +18,7 @@ const SignaturePad: React.FC<ISignature> = ({  sigCanvas, handleClearSignature }
         <div className="md:block w-full">
         <Signature
           ref={sigCanvas}
-  
+          style={{ "--w-signature-background": "#e4e6ef" }}
 
         />
 

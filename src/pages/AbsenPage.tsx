@@ -39,18 +39,14 @@ const AbsenPage: React.FC = () => {
         setLoading(true)
         // Ambil data tanda tangan
         const signatureData = sigCanvas.current.svg.innerHTML;
-        console.log(signatureData)
         const signatureImage = await svgPathToImageFile(signatureData)
-        console.log(signatureImage)
      
-        
-        // const signatureImage = await imageConvert(signatureData)
+        //Ambil data waktu
         const date_time = getCurrentDateAndTime()
         
         //ambil data photo
         const photoImage = await imageConvert(photo)
         
-        console.log(photoImage)
 
 
         try{
