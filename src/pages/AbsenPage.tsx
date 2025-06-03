@@ -82,9 +82,11 @@ const AbsenPage: React.FC = () => {
 
 
     return (
+        <>
+        {loading && <Loading className="bg-black/10"/>}
+
         <div className="p-2 md:p-10 bg-slate-100 z-1">
           
-            {loading && <Loading className="bg-black/20"/>}
             <Card >
                 {/* Start Header section */}
                 <section className="space-y-2">
@@ -105,6 +107,7 @@ const AbsenPage: React.FC = () => {
                 {/* End body section */}
             </Card>
         </div>
+                </>
     );
 };
 

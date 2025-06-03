@@ -18,7 +18,6 @@ import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useForm } from "react-hook-form";
 import { exportToExcel } from "@/helper/export";
 import { getAllKaryawan } from "@/services/karyawan";
-import Loading from "@/components/common/Loading";
 import { UtilityContext } from "../context/UtilityContext";
 
 

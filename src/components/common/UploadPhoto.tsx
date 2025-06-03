@@ -17,7 +17,7 @@ const handleScreenshot = async () => {
 }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full  mx-auto">
       <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center">
         {photo ? (
           <img

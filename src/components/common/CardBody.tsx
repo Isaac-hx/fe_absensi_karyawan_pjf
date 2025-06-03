@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { MapPin, Webcam } from "lucide-react";
-import { AppContext } from "../context/AppContext";
+import { MapPin } from "lucide-react";
 import SignaturePad from "./SignaturePad";
 import PhotoInput from "./UploadPhoto";
 import { Input } from "@/components/ui/input";
@@ -22,7 +21,6 @@ interface ICardBody {
 }
 
 const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo,setPhoto}) => {
-    const { data, setData } = useContext(AppContext);
     const [showTargetWork,SetShowTargetWork] = useState(false)
     const [location,setLocation] = useState("")
   // Get user's current location
