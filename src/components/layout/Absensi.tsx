@@ -36,12 +36,12 @@ function ExpandableText({ text, maxWords = 3 }: ExpandableTextProps) {
   const displayText = shouldTruncate && !isExpanded ? words.slice(0, maxWords).join(" ") + "..." : text
 
   if (!shouldTruncate) {
-    return <span className="break-words">{text}</span>
+    return <span className="break-words text-wrap">{text}</span>
   }
 
   return (
     <div className="space-y-2">
-      <p className="break-words leading-relaxed">{displayText}</p>
+      <p className="break-words leading-relaxed text-wrap">{displayText}</p>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
@@ -200,7 +200,7 @@ const Absensi: React.FC = () => {
                     <TableCell className="text-slate-600 p-4 max-w-[250px]">
                         <ExpandableText text={item.target_work} maxWords={3} />
                     </TableCell>
-                    <TableCell className="text-slate-600 p-4 max-w-[250px]">
+                    <TableCell className="text-slate-600 p-4 max-w-[250px] text-wrap">
                         <ExpandableText text={item.result_work} maxWords={3} />
                     </TableCell>
                     <TableCell className="text-slate-600 p-4">
