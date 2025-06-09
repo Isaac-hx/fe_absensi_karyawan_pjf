@@ -42,7 +42,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
       <div className="max-w-md w-full space-y-8">
         <div className="flex flex-col items-center">
-          <User size={48} className="text-emerald-500" />
+          <img src="./main_icon.png" width={200}/>
           <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
             Dashboard Absensi
           </h2>

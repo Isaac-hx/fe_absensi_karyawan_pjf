@@ -35,18 +35,33 @@ const AbsenPage: React.FC = () => {
        getValues
     } = useForm<AbsenFormValues>();
     
-    const onSubmitForm = async (data:AbsenFormValues) => {
+    const onSubmitForm = async () => {
         setLoading(true)
-        // Ambil data tanda tangan
         const signatureData = sigCanvas.current.svg.innerHTML;
-        const signatureImage = await svgPathToImageFile(signatureData)
-     
+             
         //Ambil data waktu
         const date_time = getCurrentDateAndTime()
+
+        const updatedValues = getValues();
         
+        const isAnyFieldEmpty = Object.values(updatedValues).some(
+            (value) => value === undefined || value === null || value === ""
+        );
+        if (Object.keys(updatedValues).length === 0 || isAnyFieldEmpty) {
+            throw new Error("Semua field harus diisi");
+        }
+
+        if (photo === null) {
+            throw new Error("Photo kosong");
+        }
+        // Ambil data tanda tangan
+        const signatureImage = await svgPathToImageFile(signatureData)
+
+      
         //ambil data photo
         const photoImage = await imageConvert(photo)
         
+    
 
 
         try{
@@ -59,15 +74,15 @@ const AbsenPage: React.FC = () => {
             //clear input
             sigCanvas.current.clear()
             setPhoto("")
-            const updatedValues = getValues();
             return Swal.fire({
-                title:"Sucess absen",
+                title:"Sucess absensi",
                 icon: "success",
             })
         } catch(error){
             return Swal.fire({
                 title: "Gagal absensi",
                 icon: "error",
+                text: String(error)
             });
         }finally{
             setLoading(false)

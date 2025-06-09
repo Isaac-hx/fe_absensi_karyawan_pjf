@@ -19,14 +19,8 @@ import { useForm } from "react-hook-form";
 import { exportToExcel } from "@/helper/export";
 import { getAllKaryawan } from "@/services/karyawan";
 import { UtilityContext } from "../context/UtilityContext";
+import type{  KaryawanFormValues } from "@/types/form";
 
-
-type KaryawanFormValues = {
-  nama:string,
-  email:string,
-  telp:string,
-  jenis_kelamin:string,
-};
 
 
 const Karyawan: React.FC = () => {

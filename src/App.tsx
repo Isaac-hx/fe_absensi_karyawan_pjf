@@ -7,6 +7,7 @@ import Karyawan from "./components/layout/Karyawan";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./components/layout/Login";
 import User from "./components/layout/User";
+import Absensi from "./components/layout/Absensi";
 
 
 const App: React.FC = () => {
@@ -17,18 +18,7 @@ const App: React.FC = () => {
       <Route index element={<AbsenPage />} />
       <Route path="/login-admin" element={<Login />} />
 
-      {/* rute not protected -must be deleted */}
-         <Route
-        path="/dashboard-demo"
-        element={
-            <AdminPage />
-        }
-      >
-        <Route index element={<Dashboard/>} />
-        <Route path="karyawan" element={<Karyawan/>} />
-        <Route path="absensi" element={<h1>Ini Absensi</h1>} />
-        <Route path="users" element={<User/>} />
-      </Route>
+      
       {/* Rute terlindungi */}
       <Route
         path="/dashboard-admin"
@@ -40,7 +30,7 @@ const App: React.FC = () => {
       >
         <Route index element={<Dashboard/>} />
         <Route path="karyawan" element={<Karyawan/>} />
-        <Route path="absensi" element={<h1>Ini Absensi</h1>} />
+        <Route path="absensi" element={<Absensi/>} />
         <Route path="users" element={<User/>} />
       </Route>
     </Routes>
