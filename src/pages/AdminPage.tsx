@@ -9,17 +9,24 @@ const AdminPage:React.FC = ()=>{
     const {loading} = useContext(UtilityContext)
     return(
         <>
-            <Header />
-                {loading && <Loading/>}
+  <div>
+      {/* Header */}
+      <Header />
 
-            <div className="flex">
-                <div className="">
-                    <SideBar/>
-                </div>
-                <main className="md:ml-71 container p-6 bg-slate-100">
-                   <Outlet />
-                </main>
-            </div>
+      {/* Main Content */}
+      <div className="grid grid-cols-5">
+        {/* Sidebar */}
+        <div className="w-full md:w-1/4 lg:w-1/5">
+          <SideBar />
+        </div>
+
+        {/* Main Content */}
+        <main className="flex-1 col-span-4 md:col-span-3 lg:col-span-4  bg-slate-100 p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  
         </>
     )
 }

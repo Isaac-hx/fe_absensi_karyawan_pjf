@@ -3,19 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download } from "lucide-react";
+import {Search, Eye ,ArrowDownWideNarrow,Download,ChevronDown,ChevronUp } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import DialogOverlay from "@/components/common/DialogOverlay";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
-import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
-import DialogAlert from "@/components/common/DialogAlertOverlay";
+
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
 import { data_karyawan } from "@/data/karyawan";
 import type { IAbsensi } from "@/types/type";
-import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useForm } from "react-hook-form";
 import { exportToExcel } from "@/helper/export";
 import { getAllKaryawan } from "@/services/karyawan";
 import { UtilityContext } from "../context/UtilityContext";
@@ -30,7 +24,43 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { absensiData } from "@/data/absensi";
+interface ExpandableTextProps {
+  text: string
+  maxWords?: number
+}
+function ExpandableText({ text, maxWords = 3 }: ExpandableTextProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
 
+  const words = text.split(" ")
+  const shouldTruncate = words.length > maxWords
+  const displayText = shouldTruncate && !isExpanded ? words.slice(0, maxWords).join(" ") + "..." : text
+
+  if (!shouldTruncate) {
+    return <span className="break-words">{text}</span>
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="break-words leading-relaxed">{displayText}</p>
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
+      >
+        {isExpanded ? (
+          <>
+            <ChevronUp size={12} />
+            Sembunyikan
+          </>
+        ) : (
+          <>
+            <ChevronDown size={12} />
+            Selanjutnya
+          </>
+        )}
+      </button>
+    </div>
+  )
+}
 
 
 const Absensi: React.FC = () => {
@@ -134,75 +164,111 @@ const Absensi: React.FC = () => {
    
 
                 </div>
-                <Table className="bg-white overflow-scroll">
+                <div className="w-full">
+                    <div className="rounded-md border overflow-hidden">
+                        <div className="overflow-x-auto">
+                    <Table className="bg-white overflow-scroll">
 
-                    <TableHeader className="bg-slate-100">
-                        <TableRow>
-                            <TableHead className="text-emerald-600">ID Karyawan</TableHead>
-                            <TableHead className="text-emerald-600">Nama</TableHead>
-                            <TableHead className="text-emerald-600">Profil</TableHead>
-                            <TableHead className="text-emerald-600">Target Kerja</TableHead>
-                            <TableHead className="text-emerald-600">Hasil Kerja</TableHead>
-                            <TableHead className="text-emerald-600">Jam masuk</TableHead>
-                            <TableHead className="text-emerald-600">Jam pulang</TableHead>
-                            <TableHead className="text-emerald-600">Detail</TableHead>
-
-
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {dataAbsensi.map((item) => (
-                            <TableRow className="" key={item.employee_id}>
-                                <TableCell className="font-medium p-4 ">{item.employee_id}</TableCell>
-                                <TableCell className="text-slate-600">{item.name }</TableCell>
-                                <TableCell className="text-slate-600">
-                                    <div className="w-6 h-6 rounded-full">
-                                        <img className="rounded-full" src={item.url_profile} alt="Dimas" />
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-slate-600">{item.target_work}</TableCell>
-                                <TableCell className="text-slate-600">{item.result_work}</TableCell>
-                                <TableCell className="text-slate-600">{item.check_in}</TableCell>
-                                <TableCell className="text-slate-600">{item.check_out}</TableCell>
-                                <TableCell >
-                                    <div className="flex items-cen not-only-of-type:ter gap-3">
-                                        <Sheet>
-                                        <SheetTrigger asChild>
-                                            <Button variant="outline">View</Button>
-                                        </SheetTrigger>
-                                        <SheetContent>
-                                            <SheetHeader>
-                                            <SheetTitle>Edit profile</SheetTitle>
-                                            <SheetDescription>
-                                                Make changes to your profile here. Click save when you&apos;re done.
-                                            </SheetDescription>
-                                            </SheetHeader>
-                                            <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                                            <div className="grid gap-3">
-                                                <Label htmlFor="sheet-demo-name">Name</Label>
-                                                <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
-                                            </div>
-                                            <div className="grid gap-3">
-                                                <Label htmlFor="sheet-demo-username">Username</Label>
-                                                <Input id="sheet-demo-username" defaultValue="@peduarte" />
-                                            </div>
-                                            </div>
-                                            <SheetFooter>
-                                            <Button type="submit">Save changes</Button>
-                                            <SheetClose asChild>
-                                                <Button variant="outline">Close</Button>
-                                            </SheetClose>
-                                            </SheetFooter>
-                                        </SheetContent>
-                                        </Sheet>
-
-                                    </div>
-
-                                </TableCell>
+                        <TableHeader className="bg-slate-100">
+                            <TableRow className="bg-gray-50">
+                                <TableHead className="font-semibold text-gray-900 min-w-[100px]">ID Karyawan</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[120px]">Nama</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[80px]">Foto</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[200px]">Target Kerja</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[200px]">Hasil Kerja</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[100px]">Check In</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[100px]">Check Out</TableHead>
+                                <TableHead className="font-semibold text-gray-900 min-w-[80px]">Aksi</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                <TableBody>
+                {dataAbsensi.map((item) => (
+                    <TableRow key={item.employee_id} className="hover:bg-gray-50/50">
+                    <TableCell className="font-medium p-4">{item.employee_id}</TableCell>
+                    <TableCell className="text-slate-600 p-4">
+                        <div className="break-words">{item.name}</div>
+                    </TableCell>
+                    <TableCell className="text-slate-600 p-4">
+                        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                        <img
+                            className="w-full h-full object-cover rounded-full"
+                            src={item.url_profile || "/placeholder.svg"}
+                            alt={item.name}
+                        />
+                        </div>
+                    </TableCell>
+                    <TableCell className="text-slate-600 p-4 max-w-[250px]">
+                        <ExpandableText text={item.target_work} maxWords={3} />
+                    </TableCell>
+                    <TableCell className="text-slate-600 p-4 max-w-[250px]">
+                        <ExpandableText text={item.result_work} maxWords={3} />
+                    </TableCell>
+                    <TableCell className="text-slate-600 p-4">
+                        <span className="whitespace-nowrap">{item.check_in}</span>
+                    </TableCell>
+                    <TableCell className="text-slate-600 p-4">
+                        <span className="whitespace-nowrap">{item.check_out}</span>
+                    </TableCell>
+                    <TableCell className="p-4">
+                        <div className="flex items-center justify-center">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                            <Button variant="ghost" size="sm" className="p-2">
+                                <Eye size={18} className="text-emerald-700" />
+                            </Button>
+                            </SheetTrigger>
+                            <SheetContent className="sm:max-w-md">
+                            <SheetHeader>
+                                <SheetTitle>Detail Karyawan</SheetTitle>
+                                <SheetDescription>Lihat detail informasi karyawan dan hasil kerja.</SheetDescription>
+                            </SheetHeader>
+                            <div className="grid gap-6 py-4">
+                                <div className="grid gap-3">
+                                <Label htmlFor="employee-id">ID Karyawan</Label>
+                                <Input id="employee-id" defaultValue={item.employee_id} readOnly />
+                                </div>
+                                <div className="grid gap-3">
+                                <Label htmlFor="employee-name">Nama</Label>
+                                <Input id="employee-name" defaultValue={item.name} readOnly />
+                                </div>
+                                <div className="grid gap-3">
+                                <Label htmlFor="target-work">Target Kerja</Label>
+                                <div className="p-3 bg-gray-50 rounded-md text-sm">{item.target_work}</div>
+                                </div>
+                                <div className="grid gap-3">
+                                <Label htmlFor="result-work">Hasil Kerja</Label>
+                                <div className="p-3 bg-gray-50 rounded-md text-sm max-h-32 overflow-y-auto">
+                                    {item.result_work}
+                                </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <Label htmlFor="check-in">Check In</Label>
+                                    <Input id="check-in" defaultValue={item.check_in} readOnly />
+                                </div>
+                                <div>
+                                    <Label htmlFor="check-out">Check Out</Label>
+                                    <Input id="check-out" defaultValue={item.check_out} readOnly />
+                                </div>
+                                </div>
+                            </div>
+                            <SheetFooter>
+                                <SheetClose asChild>
+                                <Button variant="outline">Tutup</Button>
+                                </SheetClose>
+                            </SheetFooter>
+                            </SheetContent>
+                        </Sheet>
+                        </div>
+                    </TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+                    </Table>
+
+                        </div>
+                    </div>
+                </div>
             </section>
             <section className="mt-2">
                 

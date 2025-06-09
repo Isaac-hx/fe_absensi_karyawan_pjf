@@ -19,9 +19,9 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
       {/* Logo hanya muncul pada tablet ke atas */}
-      <div className="hidden md:block">
-        <p>Logo</p>
-      </div>
+         <div >
+          <img src="/main_icon.png" width={40} alt="" />
+        </div>
 
       {/* Ikon menu untuk tampilan mobile */}
       <div>
