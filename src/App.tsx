@@ -5,7 +5,7 @@ import AdminPage from "./pages/AdminPage";
 import Dashboard from "./components/layout/Dashboard";
 import Karyawan from "./components/layout/Karyawan";
 import ProtectedRoute from "./components/common/ProtectedRoute";
-import Login from "./components/layout/Login";
+import Login from "@/components/layout/Login";
 import User from "./components/layout/User";
 import Absensi from "./components/layout/Absensi";
 

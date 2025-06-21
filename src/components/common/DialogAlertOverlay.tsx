@@ -7,7 +7,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import React from "react"
@@ -16,10 +15,10 @@ interface IDialogAlert{
     children:React.ReactNode
     title?:string
     description?:string
-    onDelete?:()=>{}
+    onDelete?:()=>void
 }
 
-const DialogAlert:React.FC<IDialogAlert>=({children,title="Delete this data?",description="This action can't be undone. This will permanently delete your data!!"})=> {
+const DialogAlert:React.FC<IDialogAlert>=({children,title="Delete this data?",description="This action can't be undone. This will permanently delete your data!!",onDelete})=> {
   return (
     <AlertDialog >
       {children}
@@ -32,7 +31,7 @@ const DialogAlert:React.FC<IDialogAlert>=({children,title="Delete this data?",de
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-red-500 hover:bg-red-600 cursor-pointer">Continue</AlertDialogAction>
+          <AlertDialogAction onClick={onDelete} className="bg-red-500 hover:bg-red-600 cursor-pointer">Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

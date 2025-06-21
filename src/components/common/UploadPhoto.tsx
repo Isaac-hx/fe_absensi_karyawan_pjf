@@ -1,9 +1,10 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Camera  } from "lucide-react";
 import Webcam from "react-webcam"
-import { Dialog,DialogTrigger } from "@/components/ui/dialog";
+import { Dialog,DialogHeader,DialogTrigger,DialogTitle,DialogFooter,DialogClose,DialogContent,DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import DialogOverlay from "./DialogOverlay";
+
 const PhotoInput:React.FC<{photo:string | null,setPhoto:React.Dispatch<React.SetStateAction<string | null>>}> = ({photo,setPhoto})=> {
     const webCamRef = useRef(null);
 
@@ -40,23 +41,27 @@ const handleScreenshot = async () => {
           <DialogTrigger asChild>
               <Button className="bg-emerald-500 hover:bg-emerald-600 cursor-pointer" type="button">Ambil Foto</Button>
           </DialogTrigger>
-          <DialogOverlay data={{
-              title:"Ambil foto",
-              description:"",
-              handleSubmit:(fn: () => void) => fn(),
-              submit:handleScreenshot,
-              button:"Ambil Foto",
-        
-          }
-
-          } dialogCloseButton={true}>
+          <DialogContent>
+             <DialogHeader>
+              <DialogTitle>Ambil Foto</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
               <div>
-              <Webcam 
+                <Webcam 
               screenshotFormat="image/jpeg"
               ref={webCamRef}
               mirrored={true}/>
               </div>
-          </DialogOverlay>
+          </DialogDescription>
+
+          <DialogFooter>
+            <DialogClose asChild>
+            <Button onClick={handleScreenshot}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">AmbilFoto</Button>
+          </DialogClose>
+          </DialogFooter>
+          </DialogContent>
+         
+
       </Dialog>
       </div>
     </div>

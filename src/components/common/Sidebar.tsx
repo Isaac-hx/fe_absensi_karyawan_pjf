@@ -60,7 +60,7 @@ const SideBar:React.FC = ()=>{
                     onClick={()=>{setMenuState(item.labelComponent)}}
                     className={`flex ${menuState === item.labelComponent ? " bg-slate-100 border-l-4 border-emerald-500 text-emerald-500  " :""}  items-center gap-x-3 gap-y-8 md:gap-y-10 cursor-pointer hover:bg-slate-100 px-4 py-2  rounded-sm cli:bg-slate-100`}>
                         {item.icon}
-                        <p className={`text-sm md:text-lg    ${menuState === item.labelComponent? 'text-emerald-500':""}`}>{item.labelComponent}</p>
+                        <p className={`text-sm md:text-lg font-medium ${menuState === item.labelComponent? 'text-emerald-500':""}`}>{item.labelComponent}</p>
                     </Link>
                         )
                     })

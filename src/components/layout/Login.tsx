@@ -1,15 +1,13 @@
-import { User, Loader, Lock } from "lucide-react"
+import { Loader, Lock } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
+import type { ILogin} from "@/types/type"
+import {login} from "@/services/auth"
 
-interface FormState {
-  username: string;
-  password: string;
-}
 
 const Login = () => {
-  const [formState, setFormState] = useState<FormState>({ username: "", password: "" })
+  const [formState, setFormState] = useState<ILogin>({ username: "", password: "" })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const navigate = useNavigate()
@@ -21,17 +19,25 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     // this logic must be deleted - demo simulation
-    const tokenValue = "access"
-    document.cookie = `token=${tokenValue}; path=/; SameSite=Strict`
+    // const tokenValue = "access"
+    // document.cookie = `token=${tokenValue}; path=/; SameSite=Strict`
     // end
+  
+  
+
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
       // Authentication logic would go here
+      const res = await login(formState)
+      console.log(res.token)
+      document.cookie = `token=${res.token}; path=/; SameSite=Strict`
+      console.log(res)
       navigate("/dashboard-admin")
     } catch (err) {
+      console.log(err)
       setError("Invalid username or password")
     } finally {
       setLoading(false)

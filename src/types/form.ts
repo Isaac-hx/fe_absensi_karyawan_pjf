@@ -14,9 +14,9 @@ export type AbsenFormValues = {
 };
 
 export type KaryawanFormValues = {
-  nama:string,
+  name:string,
   email:string,
-  telp:string,
-  jenis_kelamin:string,
+  no_telp:string,
+  gender:string,
 };
 

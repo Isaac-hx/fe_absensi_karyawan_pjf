@@ -3,32 +3,36 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download } from "lucide-react";
+import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download, Trophy } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import DialogOverlay from "@/components/common/DialogOverlay";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger,DialogContent, DialogHeader,DialogDescription,DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
 import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
-import { data_karyawan } from "@/data/karyawan";
 import type { IKaryawan } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useForm } from "react-hook-form";
 import { exportToExcel } from "@/helper/export";
-import { getAllKaryawan } from "@/services/karyawan";
+import { getAllKaryawan,createKaryawan,editKaryawanById,deleteKaryawanById} from "@/services/karyawan";
 import { UtilityContext } from "../context/UtilityContext";
 import type{  KaryawanFormValues } from "@/types/form";
+import { getCookie } from "@/helper/getCookie";
+import { useNavigate } from "react-router-dom";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 
 
 const Karyawan: React.FC = () => {
-    const [counterPage, setCounterPage] = useState(1);
+    const [counterPage, setCounterPage] = useState(0);
+    const [selectedEditId,setSelectedEditId] = useState<number>()
+    const [pagination,setPagination] = useState({})
     const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
     const {setLoading} = useContext(UtilityContext)
-
+    const [token,setToken] = useState("")
+    const navigate = useNavigate()
     const {
         register: registerAdd,
         handleSubmit:handleAddSubmit ,
@@ -46,13 +50,25 @@ const Karyawan: React.FC = () => {
   } = useForm<KaryawanFormValues>();
 
     useEffect(()=>{
+        const token = getCookie("token")
+        if(!token){
+            throw new Error("token not found in browser")
+        }
+        setToken(token)
         setLoading(true)
         const fetchKaryawan = async ()=>{
             try{
-                const data = await getAllKaryawan()
-                setDataKaryawan(data.slice((counterPage-1)*10,10*counterPage))
+                const res = await getAllKaryawan(token,counterPage)
+
+                setDataKaryawan(res.data)
+                setPagination(res.pagination)
             }catch(e){
-                alert(e)
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+                alert(e.response.data.message)
             }finally{
                 setLoading(false)
             }
@@ -67,42 +83,84 @@ const Karyawan: React.FC = () => {
         }
     };
 
-    const handleSearchState = () => {
-        console.log(searchNameKaryawan)
-    };
+    const handleSearchState = async () => {
+            if (!searchNameKaryawan.trim()) {
+                return;
+            }
+            try{
+                const res = await getAllKaryawan(token,counterPage,20,searchNameKaryawan)
+
+                setDataKaryawan(res.data)
+                setPagination(res.pagination) 
+
+            }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+                alert(`${e.response.data.status }:${e.response.data.message}`)
+            }
+
+        };
 
     const handleSortKaryawan = () => {
-        setDataKaryawan([...dataKaryawan].sort((a, b) => a.nama.localeCompare(b.nama)));
+        setDataKaryawan([...dataKaryawan].sort((a, b) => a.name.localeCompare(b.name)));
     };
-    const handleAddKaryawan = (data: KaryawanFormValues) => {
-        alert("Muncul")
-        console.log("Berjalan")
-        console.log("Add User Submitted:", data);
-        resetAddForm();
-    };
-    const handleEditKaryawan = (data: KaryawanFormValues) => {
-
-        console.log("Edit User Submitted:", data);
-        resetEditForm();
-    };
+    const handleAddKaryawan = async (data: KaryawanFormValues) => {
+        setLoading(true)
+        try{
+            const res = await createKaryawan(data,token)
+            console.log(res)
+            alert(res.message)
+            window.location.reload()
 
 
-
-    const handlePreviousPage=(e:any)=>{
-        e.preventDefault()
-        if(counterPage === 1){
-            return
+        }catch(e){
+            alert(`Gagal menambahkan data ${e}`)
+            console.log(e)
+        }finally{
+            resetAddForm();
+            setLoading(false)
         }
-        setCounterPage(counterPage-1)
-    }
-    const handleNextPage=(e:any)=>{
-        e.preventDefault()
-        if(counterPage === data_karyawan.length/10){
-            return
+
+    };
+    const handleEditKaryawan = async (data: KaryawanFormValues) => {
+        try{
+            console.log(selectedEditId)
+            if (!selectedEditId){
+                throw new Error("Id not found")
+            }
+            const res = await editKaryawanById(data,token,selectedEditId)
+            alert(res.message)
+        }catch(e){
+            alert(`Gagal mengedit data ${e}`)
+        }finally{
+            resetEditForm();
+            window.location.reload()
+
+
         }
-        setCounterPage(counterPage+1)
+    };
+
+    const handleDeleteKaryawan = async (id:number)=>{
+        try{
+            setLoading(true)
+            const res = await deleteKaryawanById(id,token)
+            alert(res.message)
+            window.location.reload()
+
+        }catch(e){
+            alert(`Gagal menghapus data ${e.response.message}`)
+
+        }finally{
+            setLoading(false)
+        }
+
     }
 
+
+  
     const handleExportExcel = ()=>{
         const res = exportToExcel(dataKaryawan)
         alert(res)
@@ -122,32 +180,31 @@ const Karyawan: React.FC = () => {
                                 <span>Add karyawan</span>
                             </Button>
                         </DialogTrigger>
-                        <DialogOverlay
-                            data={{
-                                title: "Tambah karyawan",
-                                description: "Masukan data karyawan",
-                                button: "Save",
-                                submit:handleAddKaryawan,
-                                handleSubmit: handleAddSubmit
-                            }}
-                        >
-                            <div className="grid gap-4 py-4">
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle className="text-left">Tambah karyawan</DialogTitle>
+                                <DialogDescription className="text-left">
+                                    Masukan data karyawan
+                                </DialogDescription>
+                            </DialogHeader>
+                             <div className="grid gap-x-4 gap-y-2 py-4">
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="nama" className="text-right">
                                         Nama
                                     </Label>
                                     <Input
-                                        {...registerAdd("nama", {
-                                            required: "nama can't be empty",
-                                            minLength: { value: 5, message: "nama must be at least 5 characters" },
+                                        {...registerAdd("name", {
+                                            required: "name can't be empty",
+                                            minLength: { value: 5, message: "name must be at least 5 characters" },
                                         })}
                                         placeholder="Masukkan nama"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
-                                    {addErrors.nama &&(
-                                        <p className="text-red-500 text-xs">{addErrors.nama.message}</p>
-                                    )}
+
                                 </div>
+                                                                    {addErrors.name &&(
+                                        <p className="text-red-500 text-xs">{addErrors.name.message}</p>
+                                    )}
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="email" className="text-right">
                                         Email
@@ -160,53 +217,62 @@ const Karyawan: React.FC = () => {
                                         placeholder="Masukkan email"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
-                                    {addErrors.email &&(
+  
+                                </div>
+                                                                  {addErrors.email &&(
                                         <p className="text-red-500 text-xs">{addErrors.email.message}</p>
                                     )}
-                                </div>
                                 <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                     <Label htmlFor="telp" className="text-right">
                                         No.Telp
                                     </Label>
                                     <Input
-                                    {...registerAdd("telp", {
+                                    {...registerAdd("no_telp", {
                                             required: "telp can't be empty",
                                             validate: (value) => validateAndFormatPhoneNumber(value) || "Invalid phone number",
                                         })}   
                                         placeholder="Masukkan nomer telephone"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
-                                    {addErrors.telp &&(
-                                        <p className="text-red-500 text-xs">{addErrors.telp.message}</p>
-                                    )}
-                                </div>
-                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
-                                    <Label htmlFor="Gender" className="text-right">
-                                        Gender
-                                    </Label>
-                                    <Select
-                                        
-                                        onValueChange={(value)=>{setJenisKelamin("jenis_kelamin",value)}}
-                                    >
-                                        <SelectTrigger className="w-[180px] ">
-                                            <SelectValue placeholder="Pilih jenis kelamin" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Jenis kelamin</SelectLabel>
-                                                <SelectItem value="pria">Pria</SelectItem>
-                                                <SelectItem value="perempuan">Perempuan</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
 
                                 </div>
-                                                                    {addErrors.jenis_kelamin &&(
-                                        <p className="text-red-500 text-xs">{addErrors.jenis_kelamin.message}</p>
+                                    {addErrors.no_telp &&(
+                                        <p className="text-red-500 text-xs">{addErrors.no_telp.message}</p>
+                                    )}
+                                <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
+                                                      <Label htmlFor="Gender" className="text-right">
+                                                            Gender
+                                                        </Label>
+                                                        <RadioGroup 
+                                                                                                                        {...registerAdd("gender", {
+                                            required: "gender can't be empty",
+       
+                                        })}   
+                                                        >
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="male" id="male" />
+                                                            <Label htmlFor="male">Male</Label>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="female" id="female" />
+                                                            <Label htmlFor="female">Female</Label>
+                                                        </div>
+                                                        </RadioGroup>
+
+
+                                </div>
+                                                                    {addErrors.gender &&(
+                                        <p className="text-red-500 text-xs">{addErrors.gender.message}</p>
                                     )}
                             </div>
-                            
-                        </DialogOverlay>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                     <Button onClick={handleAddSubmit(handleAddKaryawan)}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">Save</Button>
+                                </DialogClose>
+                                
+                            </DialogFooter>
+                        </DialogContent>
+   
                         
                     </Dialog>
                     
@@ -262,51 +328,52 @@ const Karyawan: React.FC = () => {
                         {dataKaryawan.map((item) => (
                             <TableRow className="" key={item.id}>
                                 <TableCell className="font-medium p-4 ">{item.id}</TableCell>
-                                <TableCell className="text-slate-600">{item.nama}</TableCell>
+                                <TableCell className="text-slate-600">{item.name}</TableCell>
                                 <TableCell className="text-slate-600">{item.email}</TableCell>
-                                <TableCell className="text-slate-600">{item.no_telepon}</TableCell>
-                                <TableCell className="text-slate-600">{item.jenis_kelamin}</TableCell>
+                                <TableCell className="text-slate-600">{item.no_telp}</TableCell>
+                                <TableCell className="text-slate-600">{item.gender}</TableCell>
                                 <TableCell >
                                     <div className="flex items-center gap-3">
                                         <Dialog>
                                             <TooltipOverlay text="Edit">
-                                            <DialogTrigger asChild>
+                                            <DialogTrigger asChild onClick={()=>{setSelectedEditId(item.id)}}>
                                                 
                                                 <Pencil className="text-slate-500 cursor-pointer" size={15} />
                                             </DialogTrigger>
                                             </TooltipOverlay>
- 
-                                            <DialogOverlay
-                                                data={{
-                                                    title: "Edit karyawan",
-                                                    description: "Edit data karyawan",
-                                                    button: "Save",
-                                                    submit:handleEditKaryawan,
-                                                    handleSubmit: handleEditSubmit
-                                                }}
-                                            >
-                                                <div className="grid gap-4 py-4">
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-left">Edit karyawan</DialogTitle>
+                                                    <DialogDescription className="text-left">
+                                                        Edit data karyawan
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                                                                                                <div className="grid gap-x-4 gap-y-2 py-4">
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="nama" className="text-right">
                                                             Nama
                                                         </Label>
                                                         <Input
-                                                            {...registerEdit("nama", {
+                                                        defaultValue={item.name}
+                                                            {...registerEdit("name", {
                                                             required: "Nama can't be empty",
                                                             minLength: { value: 5, message: "nama must be at least 5 characters" },
                                                             })}
                                                             placeholder="Masukkan nama"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
-                                                    {editErrors.nama &&(
-                                                        <p className="text-red-500 text-xs">{editErrors.nama.message}</p>
-                                                    )}                                               
+                                              
                                                     </div>
+                                                                                                        {editErrors.name &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.name.message}</p>
+                                                    )} 
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="email" className="text-right">
                                                             Email
                                                         </Label>
                                                         <Input
+                                                                                                                                            defaultValue={item.email}
+
                                                             {...registerEdit("email", {
                                                             required: "Email can't be empty",
                                                             validate: (value) => isValidEmail(value) || "Invalid email address",
@@ -314,54 +381,59 @@ const Karyawan: React.FC = () => {
                                                             placeholder="Masukkan email"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
-                                                     {editErrors.email &&(
-                                                        <p className="text-red-500 text-xs">{editErrors.email.message}</p>
-                                                    )}       
+    
                                                     </div>
+                                                                                                         {editErrors.email &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.email.message}</p>
+                                                    )}   
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="telp" className="text-right">
                                                             No.Telp
                                                         </Label>
                                                         <Input
-                                                            {...registerEdit("telp", {
+                                                            defaultValue={item.no_telp}
+                                                            {...registerEdit("no_telp", {
                                                             required: "No.Telp can't be empty",
                                                             validate: (value) => validateAndFormatPhoneNumber(value) || "Invalid phone number",
                                                             })}
                                                             placeholder="Masukkan nomer telephone"
                                                             className="col-span-3 md:text-sm text-xs"
                                                         />
-                                                        {editErrors.telp &&(
-                                                        <p className="text-red-500 text-xs">{editErrors.telp.message}</p>
-                                                    )}
+       
                                                     </div>
+                                                                                                     {editErrors.no_telp &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.no_telp.message}</p>
+                                                    )}
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
                                                         <Label htmlFor="Gender" className="text-right">
                                                             Gender
                                                         </Label>
-                                                        <Select
-                                                            required
-                                                            defaultValue="pria"
-                                                        {...registerEdit("jenis_kelamin", { required: "Jenis Kelamin is required" })}
-                                                        >
-                                                            <SelectTrigger className="w-[180px] ">
-                                                                <SelectValue placeholder="Pilih jenis kelamin" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup defaultValue={"pria"}>
-                                                                    <SelectLabel>Jenis kelamin</SelectLabel>
-                                                                    <SelectItem value="pria">Pria</SelectItem>
-                                                                    <SelectItem value="perempuan">Perempuan</SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                        {editErrors.jenis_kelamin &&(
-                                                        <p className="text-red-500 text-xs">{editErrors.jenis_kelamin.message}</p>
-                                                    )}
+                                                        <RadioGroup defaultValue={item.gender}>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="male" id="male" />
+                                                            <Label htmlFor="male">Male</Label>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="female" id="female" />
+                                                            <Label htmlFor="female">Female</Label>
+                                                        </div>
+                                                        </RadioGroup>
+
                                                     </div>
-                                                </div>
-                                            </DialogOverlay>
+                                                                                                            {editErrors.gender &&(
+                                                        <p className="text-red-500 text-xs">{editErrors.gender.message}</p>
+                                                    )}
+                                                </div>  
+                                                                                                                                <DialogFooter>
+                                                <DialogClose asChild>
+                                                    <Button onClick={handleEditSubmit(handleEditKaryawan)}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">Save</Button>          
+                                                </DialogClose>
+                                            </DialogFooter>
+                                            </DialogContent>
+
+
                                         </Dialog>
-                                        <DialogAlert>
+                                        <DialogAlert onDelete={()=>{handleDeleteKaryawan(item.id)}}>
                                             <TooltipOverlay text="Delete">
                                                 <AlertDialogTrigger asChild>
                                                             <Trash2 size={15} className="text-red-500 cursor-pointer" />
@@ -380,7 +452,7 @@ const Karyawan: React.FC = () => {
             </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay total_data={data_karyawan.length} counter_data={counterPage} handlePreviousPage={handlePreviousPage} handleNextPage={handleNextPage} />
+                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} />
 
             </section>
         </div>

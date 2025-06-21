@@ -1,14 +1,113 @@
 import type{IAbsensi} from "@/types/type"
 
 export const absensiData: IAbsensi[] =[
-  { employee_id: 1, name: "John Doe", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png", target_work: "Complete project A", result_work: "Completed on time", "location": "Office", "create_date": "2025-06-05T08:00:00Z", "check_in": 1622548800, "check_out": 1622584800 },
-  { employee_id: 2, name: "Jane Smith", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature2.png", target_work: "Prepare presentation", result_work: "Completed with revisions", "location": "Remote", "create_date": "2025-06-05T08:30:00Z", "check_in": 1622549400, "check_out": 1622583000 },
-  { employee_id: 3, name: "Alice Johnson", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature3.png", target_work: "Organize team meeting", result_work: "Scheduled for next week", "location": "Office", "create_date": "2025-06-05T09:00:00Z", "check_in": 1622550000, "check_out": 1622583600 },
-  { employee_id: 4, name: "Bob Brown", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature4.png", target_work: "Update documentation", result_work: "Work in progress", "location": "Remote", "create_date": "2025-06-05T09:15:00Z", "check_in": 1622550900, "check_out": 1622584500 },
-  { employee_id: 5, name: "Carol White", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature5.png", target_work: "Submit report", result_work: "Submitted with corrections", "location": "Office", "create_date": "2025-06-05T09:30:00Z", "check_in": 1622551800, "check_out": 1622585400 },
-  { employee_id: 6, name: "Dan Black", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature6.png", target_work: "Review PRs", result_work: "Configured with issues and create a button to submit changes", "location": "Office", "create_date": "2025-06-05T10:00:00Z", "check_in": 1622553600, "check_out": 1622587200 },
-  { employee_id: 7, name: "Eve Green", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature7.png", target_work: "Prepare training materials", result_work: "Finalized materials", "location": "Remote", "create_date": "2025-06-05T10:30:00Z", "check_in": 1622555400, "check_out": 1622589000 },
-  { employee_id: 8, name: "Frank Grey", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature8.png", target_work: "Setup new environment", result_work: "Configured with issues and create a button to submit changes", "location": "Office", "create_date": "2025-06-05T11:00:00Z", "check_in": 1622557200, "check_out": 1622590800 },
-  { employee_id: 9, name: "Grace Blue", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature9.png", target_work: "Test new feature", result_work: "Passed all tests", "location": "Remote", "create_date": "2025-06-05T11:30:00Z", "check_in": 1622559000, "check_out": 1622592600 },
-  { employee_id: 10, name: "Hank Red", url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75", url_signature: "https://example.com/signature10.png", target_work: "Draft proposal", result_work: "Submitted for review", "location": "Office", "create_date": "2025-06-05T12:00:00Z", "check_in": 1622560800, "check_out": 1622594400 }
+  {
+    karyawan_id: 3521,
+    name: "Andrew Jacobs MD",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Special educational needs teacher",
+    result_work: "In Progress",
+    location: "Mcguireport",
+    create_date: "2015-03-28",
+    check_in: "11:07:24",
+    check_out: "12:21:35"
+  },
+  {
+    karyawan_id: 1806,
+    name: "Jamie Gilbert",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Textile designer",
+    result_work: "In Progress",
+    location: "North Mandy",
+    create_date: "1982-09-15",
+    check_in: "22:08:33",
+    check_out: "05:12:40"
+  },
+  {
+    karyawan_id: 8378,
+    name: "Tracy Harris",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Multimedia programmer",
+    result_work: "Completed",
+    location: "Marcborough",
+    create_date: "1983-02-02",
+    check_in: "07:26:32",
+    check_out: "00:29:44"
+  },
+  {
+    karyawan_id: 1269,
+    name: "Colleen Black",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Insurance underwriter",
+    result_work: "Completed",
+    location: "Torresview",
+    create_date: "2019-01-08",
+    check_in: "21:05:29",
+    check_out: "09:51:13"
+  },
+  {
+    karyawan_id: 6782,
+    name: "Olivia Moore",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Software developer",
+    result_work: "Completed",
+    location: "South Bernhard",
+    create_date: "2022-06-11",
+    check_in: "09:44:32",
+    check_out: "19:13:56"
+  },
+  {
+    karyawan_id: 2649,
+    name: "Evan Bell",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Graphic designer",
+    result_work: "Failed",
+    location: "West Maxwellside",
+    create_date: "2011-07-20",
+    check_in: "18:32:11",
+    check_out: "20:59:38"
+  },
+  {
+    karyawan_id: 4912,
+    name: "Sophia Allen",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "UX researcher",
+    result_work: "In Progress",
+    location: "Lake Lillie",
+    create_date: "2018-10-18",
+    check_in: "08:15:22",
+    check_out: "16:33:47"
+  },
+  {
+    karyawan_id: 8754,
+    name: "Jack Nelson",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Data scientist",
+    result_work: "Completed",
+    location: "Felicityland",
+    create_date: "2023-03-09",
+    check_in: "14:30:01",
+    check_out: "22:50:44"
+  },
+  {
+    karyawan_id: 3504,
+    name: "Lucas Carter",
+    url_profile: "https://instasize.com/_next/image?url=%2FV169WnBir5QwcI5uGBAp%2Fs%2Fcbb07b87f77d89afe79fe9efea8a900ea91a22fc89e9e91334c4ed3b54621cdc&w=640&q=75",
+    url_signature: "https://res.cloudinary.com/dy374g0xl/image/upload/v1748943924/oltggkxgpbxamq3798a8.png",
+    target_work: "Marketing manager",
+    result_work: "Failed",
+    location: "Arnoldstad",
+    create_date: "2020-11-21",
+    check_in: "16:12:10",
+    check_out: "18:44:20"
+  },
+
 ]

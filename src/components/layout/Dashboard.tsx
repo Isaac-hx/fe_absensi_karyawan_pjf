@@ -16,8 +16,7 @@ const Dashboard: React.FC = () => {
       {/* End header */}
 
       {/* Body */}
-      <section className="grid grid-cols-1 md:grid-cols-2 container">
-        <div >
+      <section className="grid grid-cols-3 md:grid-cols-2 justify-items-center container">
           <Card className="md:w-[280px]">
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -34,7 +33,39 @@ const Dashboard: React.FC = () => {
             <p className="text-4xl">30</p>
           </CardContent>
         </Card>
-        </div>
+                <Card className="md:w-[280px]">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+               <div className="bg-emerald-500 text-emerald-200 rounded-full w-fit p-2"> 
+                <Users  />
+              </div>
+              <div>
+                <CardTitle className="text-xl md:text-lg">Jumlah User</CardTitle>
+              </div>              
+            </div>
+
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl">30</p>
+          </CardContent>
+        </Card>
+                <Card className="md:w-[280px]">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+               <div className="bg-emerald-500 text-emerald-200 rounded-full w-fit p-2"> 
+                <Users  />
+              </div>
+              <div>
+                <CardTitle className="text-xl md:text-lg">Jumlah Karyawan</CardTitle>
+              </div>              
+            </div>
+
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl">30</p>
+          </CardContent>
+        </Card>
+      
 
       </section>
       {/* End body */}

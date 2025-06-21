@@ -8,7 +8,6 @@ import { useContext, useEffect, useState } from "react";
 
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
-import { data_karyawan } from "@/data/karyawan";
 import type { IAbsensi } from "@/types/type";
 import { exportToExcel } from "@/helper/export";
 import { getAllKaryawan } from "@/services/karyawan";
@@ -24,6 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { absensiData } from "@/data/absensi";
+import { Textarea } from "../ui/textarea";
 interface ExpandableTextProps {
   text: string
   maxWords?: number
@@ -75,7 +75,7 @@ const Absensi: React.FC = () => {
         setLoading(true)
         const fetchKaryawan = async ()=>{
             try{
-                const data = await getAllKaryawan()
+            
                 setDataAbsensi(absensiData.slice((counterPage-1)*10,10*counterPage))
             }catch(e){
                 alert(e)
@@ -93,8 +93,26 @@ const Absensi: React.FC = () => {
         }
     };
 
+    /**
+     * Handles the search functionality for the absensi data.
+     * 
+     * - If the search input (`searchAbsensi`) is empty or contains only whitespace,
+     *   it resets the displayed data (`dataAbsensi`) to the current page's slice of the full data (`absensiData`).
+     * - If there is a search query, it filters `absensiData` by matching the `name` property (case-insensitive)
+     *   and updates `dataAbsensi` with the filtered results for the current page.
+     *
+     * Pagination is handled by slicing the data based on the current page (`counterPage`), 
+     * displaying 10 items per page.
+     */
     const handleSearchState = () => {
-        console.log(searchAbsensi)
+        if (!searchAbsensi.trim()) {
+            setDataAbsensi(absensiData.slice((counterPage - 1) * 10, 10 * counterPage));
+            return;
+        }
+        const filtered = absensiData.filter(item =>
+            item.name.toLowerCase().includes(searchAbsensi.toLowerCase())
+        );
+        setDataAbsensi(filtered.slice((counterPage - 1) * 10, 10 * counterPage));
     };
 
     const handleSortKaryawan = () => {
@@ -111,7 +129,7 @@ const Absensi: React.FC = () => {
     }
     const handleNextPage=(e:any)=>{
         e.preventDefault()
-        if(counterPage === data_karyawan.length/10){
+        if(counterPage === dataAbsensi.length/10){
             return
         }
         setCounterPage(counterPage+1)
@@ -183,8 +201,8 @@ const Absensi: React.FC = () => {
                         </TableHeader>
                 <TableBody>
                 {dataAbsensi.map((item) => (
-                    <TableRow key={item.employee_id} className="hover:bg-gray-50/50">
-                    <TableCell className="font-medium p-4">{item.employee_id}</TableCell>
+                    <TableRow key={item.karyawan_id} className="hover:bg-gray-50/50">
+                    <TableCell className="font-medium p-4">{item.karyawan_id}</TableCell>
                     <TableCell className="text-slate-600 p-4">
                         <div className="break-words">{item.name}</div>
                     </TableCell>
@@ -217,39 +235,53 @@ const Absensi: React.FC = () => {
                                 <Eye size={18} className="text-emerald-700" />
                             </Button>
                             </SheetTrigger>
-                            <SheetContent className="sm:max-w-md">
-                            <SheetHeader>
+                            <SheetContent className="sm:max-w-md p-4 overflow-y-scroll">
+                            <SheetHeader> 
                                 <SheetTitle>Detail Karyawan</SheetTitle>
-                                <SheetDescription>Lihat detail informasi karyawan dan hasil kerja.</SheetDescription>
+                                <SheetDescription>Lihat detail informasi absensi dan hasil kerja.</SheetDescription>
                             </SheetHeader>
                             <div className="grid gap-6 py-4">
+                                 <div className="grid gap-3 justify-center">
+                                    <div className="w-40 rounded-full ring-2 ring-emerald-500">
+                                        <img className="rounded-full" id="profile_detail" src={item.url_profile} defaultValue={item.karyawan_id}  />
+                                    </div>
+
+                                </div>
                                 <div className="grid gap-3">
                                 <Label htmlFor="employee-id">ID Karyawan</Label>
-                                <Input id="employee-id" defaultValue={item.employee_id} readOnly />
+                                <Input className="focus:border-none" id="employee-id" defaultValue={item.karyawan_id} readOnly />
+                                </div>
+                                <div className="grid gap-3">
+                                <Label htmlFor="location">Location</Label>
+                                <Input className="focus:border-none" id="location" defaultValue={item.location} readOnly />
                                 </div>
                                 <div className="grid gap-3">
                                 <Label htmlFor="employee-name">Nama</Label>
-                                <Input id="employee-name" defaultValue={item.name} readOnly />
+                                <Input className="focus:border-none" id="employee-name" defaultValue={item.name} readOnly />
                                 </div>
                                 <div className="grid gap-3">
                                 <Label htmlFor="target-work">Target Kerja</Label>
-                                <div className="p-3 bg-gray-50 rounded-md text-sm">{item.target_work}</div>
+                                <Textarea readOnly className="p-3 bg-gray-50 rounded-md text-sm" defaultValue={item.target_work}></Textarea>
                                 </div>
                                 <div className="grid gap-3">
                                 <Label htmlFor="result-work">Hasil Kerja</Label>
-                                <div className="p-3 bg-gray-50 rounded-md text-sm max-h-32 overflow-y-auto">
-                                    {item.result_work}
-                                </div>
+                                <Textarea className="p-3 bg-gray-50 rounded-md text-sm max-h-32 overflow-y-auto" defaultValue={item.result_work} readOnly>
+                                    
+                                </Textarea>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <Label htmlFor="check-in">Check In</Label>
-                                    <Input id="check-in" defaultValue={item.check_in} readOnly />
+                                    <Input className="focus:border-none" id="check-in" defaultValue={item.check_in} readOnly />
                                 </div>
                                 <div>
                                     <Label htmlFor="check-out">Check Out</Label>
-                                    <Input id="check-out" defaultValue={item.check_out} readOnly />
+                                    <Input className="focus:border-none" id="check-out" defaultValue={item.check_out} readOnly />
                                 </div>
+                                </div>
+                                <div className="grid gap-3">
+                                <Label htmlFor="signature">Tanda tangan</Label>
+                                <img  src={item.url_signature} id="signature" alt="signature"/>
                                 </div>
                             </div>
                             <SheetFooter>
@@ -272,7 +304,7 @@ const Absensi: React.FC = () => {
             </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay total_data={data_karyawan.length} counter_data={counterPage} handlePreviousPage={handlePreviousPage} handleNextPage={handleNextPage} />
+                    <PaginationOverlay total_data={dataAbsensi.length} counter_data={counterPage} handlePreviousPage={handlePreviousPage} handleNextPage={handleNextPage} />
 
             </section>
         </div>
