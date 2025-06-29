@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import AbsenPage from "./pages/AbsenPage";
 import { Routes, Route } from "react-router";
 import AdminPage from "./pages/AdminPage";
@@ -11,6 +11,7 @@ import Absensi from "./components/layout/Absensi";
 
 
 const App: React.FC = () => {
+
   return (
 
     <Routes>
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         <Route path="users" element={<User/>} />
       </Route>
     </Routes>
+
   );
 };
 

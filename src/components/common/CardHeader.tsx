@@ -10,7 +10,7 @@ const CardHeader:React.FC =()=>{
                         </div>
                         <div className="space-y-2 md:space-y-0 md:space-x-1 md:flex xl:gap-2">
                           <Badge className="bg-emerald-200">
-                            < p className="text-emerald-900">Absen masuk 05.00 - 11.00</p>
+                            < p className="text-emerald-900">Absen masuk 05.00 - 12.00</p>
                           </Badge>
                         <Badge className="bg-emerald-200">
                             < p className="text-emerald-900">Absen pulang 16.30 - 05.00</p>

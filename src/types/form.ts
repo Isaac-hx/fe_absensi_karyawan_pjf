@@ -1,14 +1,14 @@
 //This file contain what data should be send
 export type AbsenFormValues = {
-  employee_id:string,
+  karyawan_id:number,
   url_profile:string,
   url_signature:string,
   target_work?:string,
   result_work?:string,
   location?:string,
   create_date?:string,
-  check_in:number,
-  check_out:number
+  check_in?:string,
+  check_out?:string
  
 
 };
@@ -20,3 +20,9 @@ export type KaryawanFormValues = {
   gender:string,
 };
 
+export type UserFormValues = {
+  username:string
+  password?:string
+  confirm_password?:string
+  status: string
+}

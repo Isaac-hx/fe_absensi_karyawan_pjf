@@ -1,13 +1,15 @@
 import { Loader, Lock } from "lucide-react"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import type { ILogin} from "@/types/type"
 import {login} from "@/services/auth"
+import { AppContext } from "../context/AppContext"
 
 
 const Login = () => {
   const [formState, setFormState] = useState<ILogin>({ username: "", password: "" })
+  const {setGlobalUser} = useContext(AppContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const navigate = useNavigate()
@@ -35,6 +37,7 @@ const Login = () => {
       console.log(res.token)
       document.cookie = `token=${res.token}; path=/; SameSite=Strict`
       console.log(res)
+      setGlobalUser({username:res.username})
       navigate("/dashboard-admin")
     } catch (err) {
       console.log(err)

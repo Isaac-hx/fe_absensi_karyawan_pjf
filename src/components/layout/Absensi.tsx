@@ -24,13 +24,19 @@ import {
 } from "@/components/ui/sheet"
 import { absensiData } from "@/data/absensi";
 import { Textarea } from "../ui/textarea";
+import { getCookie } from "@/helper/getCookie";
+import { useNavigate } from "react-router";
+import { getAbsensiById, getAllAbsensi } from "@/services/absensi";
+import { formatTime } from "@/helper/convertTime";
 interface ExpandableTextProps {
   text: string
   maxWords?: number
 }
 function ExpandableText({ text, maxWords = 3 }: ExpandableTextProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-
+  if(text === null || text === undefined){
+    return "-"
+  }
   const words = text.split(" ")
   const shouldTruncate = words.length > maxWords
   const displayText = shouldTruncate && !isExpanded ? words.slice(0, maxWords).join(" ") + "..." : text
@@ -66,17 +72,27 @@ function ExpandableText({ text, maxWords = 3 }: ExpandableTextProps) {
 const Absensi: React.FC = () => {
     const [counterPage, setCounterPage] = useState(1);
     const [dataAbsensi,setDataAbsensi] = useState<IAbsensi[]>([])
+    const [detailAbsensi,setDetailAbsensi] = useState<IAbsensi>()
     const [searchAbsensi, setSearchAbsensi] = useState("");
-    const {setLoading} = useContext(UtilityContext)
-
+    const {setLoading,loading} = useContext(UtilityContext)
+    const [pagination,setPagination] = useState({})
+    
+    const navigate = useNavigate()
    
 
     useEffect(()=>{
+        const token = getCookie("token")
+        if(!token){
+        alert("Credential invalid")            
+        navigate("/login-admin")
+            return        }
         setLoading(true)
-        const fetchKaryawan = async ()=>{
+        const fetchAllAbsensi = async ()=>{
             try{
-            
-                setDataAbsensi(absensiData.slice((counterPage-1)*10,10*counterPage))
+                const res = await getAllAbsensi(token,counterPage)
+                console.log(res)
+                setDataAbsensi(res.data)
+                setPagination(res.pagination)
             }catch(e){
                 alert(e)
             }finally{
@@ -84,7 +100,7 @@ const Absensi: React.FC = () => {
             }
 
         }
-        fetchKaryawan()
+        fetchAllAbsensi()
     },[counterPage])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -104,41 +120,84 @@ const Absensi: React.FC = () => {
      * Pagination is handled by slicing the data based on the current page (`counterPage`), 
      * displaying 10 items per page.
      */
-    const handleSearchState = () => {
-        if (!searchAbsensi.trim()) {
-            setDataAbsensi(absensiData.slice((counterPage - 1) * 10, 10 * counterPage));
-            return;
-        }
-        const filtered = absensiData.filter(item =>
-            item.name.toLowerCase().includes(searchAbsensi.toLowerCase())
-        );
-        setDataAbsensi(filtered.slice((counterPage - 1) * 10, 10 * counterPage));
-    };
+   const handleSearchState = async () => {
+    if(searchAbsensi === ""){
+        navigate("/dashboard-admin/absensi")
+    }
+            const token = getCookie("token")
+            if(!token){
+    alert("Credential invalid")            
+    navigate("/login-admin")
+            return            }
+            try{
+                const res = await getAllAbsensi(token,0,20,"ASC",searchAbsensi)
 
+                setDataAbsensi(res.data)
+                setPagination(res.pagination) 
+
+            }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+                alert(`${e.response.data.status }:${e.response.data.message}`)
+            }
+
+        };
+
+    const fetchDetailAbsensi = async (id:number)=>{
+        setLoading(true)
+        const token = getCookie("token")
+
+        if(!token){
+            alert("Credential invalid")            
+            navigate("/login-admin")
+            return        }
+        try{
+            const res = await getAbsensiById(token,id)
+            setDetailAbsensi(res)
+            console.log(res)
+        }catch(e){
+
+            console.log(e)
+        }finally{
+            setLoading(false)
+        }
+        
+    }
     const handleSortKaryawan = () => {
         setDataAbsensi([...dataAbsensi].sort((a, b) => a.name.localeCompare(b.name)));
     };
   
 
-    const handlePreviousPage=(e:any)=>{
-        e.preventDefault()
-        if(counterPage === 1){
-            return
-        }
-        setCounterPage(counterPage-1)
-    }
-    const handleNextPage=(e:any)=>{
-        e.preventDefault()
-        if(counterPage === dataAbsensi.length/10){
-            return
-        }
-        setCounterPage(counterPage+1)
-    }
 
-    const handleExportExcel = ()=>{
-        const res = exportToExcel(dataAbsensi)
-        alert(res)
-    }
+    const handleExportExcel = async() => {
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+            alert("Credential invalid")            
+            navigate("/login-admin")
+            return        
+        }
+        try{
+            const res = await getAllAbsensi(token,0,10000,"ASC")
+            
+            const dataExport = exportToExcel("Absensi",res.data);
+            console.log(dataExport)
+        }catch(e){
+            if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+            alert(e.response.data.message)
+
+        }finally{
+            setLoading(false)
+        }
+       
+    };
 
     return (
         
@@ -201,7 +260,7 @@ const Absensi: React.FC = () => {
                         </TableHeader>
                 <TableBody>
                 {dataAbsensi.map((item) => (
-                    <TableRow key={item.karyawan_id} className="hover:bg-gray-50/50">
+                    <TableRow key={item.absensi_id} className="hover:bg-gray-50/50">
                     <TableCell className="font-medium p-4">{item.karyawan_id}</TableCell>
                     <TableCell className="text-slate-600 p-4">
                         <div className="break-words">{item.name}</div>
@@ -222,74 +281,121 @@ const Absensi: React.FC = () => {
                         <ExpandableText text={item.result_work} maxWords={3} />
                     </TableCell>
                     <TableCell className="text-slate-600 p-4">
-                        <span className="whitespace-nowrap">{item.check_in}</span>
+                        <span className="whitespace-nowrap">{formatTime( item.check_in)}</span>
                     </TableCell>
                     <TableCell className="text-slate-600 p-4">
-                        <span className="whitespace-nowrap">{item.check_out}</span>
+                        <span className="whitespace-nowrap">{formatTime(item.check_out)}</span>
                     </TableCell>
                     <TableCell className="p-4">
                         <div className="flex items-center justify-center">
                         <Sheet>
                             <SheetTrigger asChild>
-                            <Button variant="ghost" size="sm" className="p-2">
+                            <Button onClick={()=>{fetchDetailAbsensi(item.absensi_id)}} variant="ghost" size="sm" className="p-2">
                                 <Eye size={18} className="text-emerald-700" />
                             </Button>
                             </SheetTrigger>
-                            <SheetContent className="sm:max-w-md p-4 overflow-y-scroll">
-                            <SheetHeader> 
-                                <SheetTitle>Detail Karyawan</SheetTitle>
-                                <SheetDescription>Lihat detail informasi absensi dan hasil kerja.</SheetDescription>
-                            </SheetHeader>
-                            <div className="grid gap-6 py-4">
-                                 <div className="grid gap-3 justify-center">
-                                    <div className="w-40 rounded-full ring-2 ring-emerald-500">
-                                        <img className="rounded-full" id="profile_detail" src={item.url_profile} defaultValue={item.karyawan_id}  />
-                                    </div>
-
-                                </div>
-                                <div className="grid gap-3">
-                                <Label htmlFor="employee-id">ID Karyawan</Label>
-                                <Input className="focus:border-none" id="employee-id" defaultValue={item.karyawan_id} readOnly />
-                                </div>
-                                <div className="grid gap-3">
-                                <Label htmlFor="location">Location</Label>
-                                <Input className="focus:border-none" id="location" defaultValue={item.location} readOnly />
-                                </div>
-                                <div className="grid gap-3">
-                                <Label htmlFor="employee-name">Nama</Label>
-                                <Input className="focus:border-none" id="employee-name" defaultValue={item.name} readOnly />
-                                </div>
-                                <div className="grid gap-3">
-                                <Label htmlFor="target-work">Target Kerja</Label>
-                                <Textarea readOnly className="p-3 bg-gray-50 rounded-md text-sm" defaultValue={item.target_work}></Textarea>
-                                </div>
-                                <div className="grid gap-3">
-                                <Label htmlFor="result-work">Hasil Kerja</Label>
-                                <Textarea className="p-3 bg-gray-50 rounded-md text-sm max-h-32 overflow-y-auto" defaultValue={item.result_work} readOnly>
+                    {!loading &&                     <SheetContent className="sm:max-w-md p-4 overflow-y-scroll">
+                        <SheetHeader>
+                            <SheetTitle>Detail Absensi</SheetTitle>
+                            <SheetDescription>
+                                Lihat detail informasi absensi dan hasil kerja.
+                            </SheetDescription>
+                        </SheetHeader>
+                        <div className="grid gap-6 py-4">
+                            <div className="grid gap-3 justify-center">
+                                <div className="w-40 h-40  rounded-full ring-2 ring-emerald-500">
+                                    <img
+                                        className="rounded-full w-full h-full object-cover"
+                                        id="profile_detail"
                                     
-                                </Textarea>
+                                        src={
+                                            detailAbsensi?.url_profile ||
+                                            "https://i.pinimg.com/474x/2b/da/51/2bda51ca60cc3b5daaa8e062eb880430.jpg"
+                                        }
+                                        alt="Profile"
+                                    />
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="employee-id">ID Karyawan</Label>
+                                <Input
+                                    className="focus:border-none"
+                                    id="employee-id"
+                                    defaultValue={detailAbsensi?.karyawan_id}
+                                    readOnly
+                                />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="location">Location</Label>
+                                <Input
+                                    className="focus:border-none"
+                                    id="location"
+                                    defaultValue={detailAbsensi?.location}
+                                    readOnly
+                                />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="employee-name">Nama</Label>
+                                <Input
+                                    className="focus:border-none"
+                                    id="employee-name"
+                                    defaultValue={detailAbsensi?.name}
+                                    readOnly
+                                />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="target-work">Target Kerja</Label>
+                                <Textarea
+                                    readOnly
+                                    className="p-3 bg-gray-50 rounded-md text-sm"
+                                    defaultValue={detailAbsensi?.target_work}
+                                ></Textarea>
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="result-work">Hasil Kerja</Label>
+                                <Textarea
+                                    className="p-3 bg-gray-50 rounded-md text-sm max-h-32 overflow-y-auto"
+                                    defaultValue={detailAbsensi?.result_work}
+                                    readOnly
+                                ></Textarea>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <Label htmlFor="check-in">Check In</Label>
-                                    <Input className="focus:border-none" id="check-in" defaultValue={item.check_in} readOnly />
+                                    <Input
+                                        className="focus:border-none"
+                                        id="check-in"
+                                        defaultValue={formatTime(detailAbsensi?.check_in)}
+                                        readOnly
+                                    />
                                 </div>
                                 <div>
                                     <Label htmlFor="check-out">Check Out</Label>
-                                    <Input className="focus:border-none" id="check-out" defaultValue={item.check_out} readOnly />
-                                </div>
-                                </div>
-                                <div className="grid gap-3">
-                                <Label htmlFor="signature">Tanda tangan</Label>
-                                <img  src={item.url_signature} id="signature" alt="signature"/>
+                                    <Input
+                                        className="focus:border-none"
+                                        id="check-out"
+                                        defaultValue={formatTime(detailAbsensi?.check_out)}
+                                        readOnly
+                                    />
                                 </div>
                             </div>
-                            <SheetFooter>
-                                <SheetClose asChild>
+                            <div className="grid gap-3">
+                                <Label htmlFor="signature">Tanda tangan</Label>
+                                <img
+                                    src={detailAbsensi?.url_signature}
+                                    id="signature"
+                                    alt="Signature"
+                                />
+                            </div>
+                        </div>
+                        <SheetFooter>
+                            <SheetClose asChild>
                                 <Button variant="outline">Tutup</Button>
-                                </SheetClose>
-                            </SheetFooter>
-                            </SheetContent>
+                            </SheetClose>
+                        </SheetFooter>
+                    </SheetContent>}
+
+
                         </Sheet>
                         </div>
                     </TableCell>
@@ -304,7 +410,7 @@ const Absensi: React.FC = () => {
             </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay total_data={dataAbsensi.length} counter_data={counterPage} handlePreviousPage={handlePreviousPage} handleNextPage={handleNextPage} />
+                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} setCounterPage={setCounterPage} />
 
             </section>
         </div>

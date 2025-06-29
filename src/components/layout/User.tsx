@@ -4,10 +4,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Search, Pencil, Trash2, ArrowDownWideNarrow, Download } from "lucide-react";
-import { useEffect, useState } from "react";
-import DialogOverlay from "@/components/common/DialogOverlay";
+import { useContext, useEffect, useState } from "react";
 import { Dialog, DialogTrigger, DialogContent, DialogDescription, DialogHeader, DialogFooter, DialogClose, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
+import { RadioGroup,RadioGroupItem } from "@/components/ui/radio-group";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
@@ -16,24 +15,23 @@ import type { IUser } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
-import { exportToExcel } from "@/helper/export";
-
-type AddUserFormValues = {
-    username: string;
-    password: string;
-    confirm_password: string;
-};
-
-type EditUserFormValues = {
-    username: string;
-    status: string;
-};
+import { exportToExcel } from "@/helper/export"
+import type { UserFormValues } from "@/types/form";
+import {register} from "@/services/auth"
+import { UtilityContext } from "../context/UtilityContext";
+import { getCookie } from "@/helper/getCookie";
+import { getAllUsers,editUserById,deleteUserById } from "@/services/user";
+import { useNavigate } from "react-router";
 
 const User: React.FC = () => {
+    const {setLoading} = useContext(UtilityContext)
+    const [pagination,setPagination] = useState({})
+    const [selectedEditId,setSelectedEditId] = useState<number>()
+    
     const [dataUser, setDataUser] = useState<IUser[]>([]);
-    const [counterPage, setCounterPage] = useState(1);
+    const [counterPage, setCounterPage] = useState(0);
     const [searchNameuser, setSearchNameuser] = useState("");
-
+    const navigate = useNavigate()
     // Add User Form
     const {
         register: registerAdd,
@@ -41,7 +39,9 @@ const User: React.FC = () => {
         formState: { errors: addErrors },
         watch: watchAdd,
         reset: resetAddForm,
-    } = useForm<AddUserFormValues>();
+        setValue,
+        getValues
+    } = useForm<UserFormValues>();
 
     // Edit User Form
     const {
@@ -49,47 +49,118 @@ const User: React.FC = () => {
         handleSubmit: handleEditSubmit,
         formState: { errors: editErrors },
         reset: resetEditForm,
-    } = useForm<EditUserFormValues>();
+        setValue:setEditValue,
+        getValues:getEditValues
+
+    } = useForm<UserFormValues>();
 
     useEffect(() => {
-        setDataUser(users.slice((counterPage - 1) * 10, 10 * counterPage));
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
+        const fetchAllUsers = async ()=>{
+            try{
+                const res = await getAllUsers(token,counterPage)
+                setDataUser(res.data)
+                setPagination(res.pagination)
+            }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+                alert(e.response.message)
+            }finally{
+                setLoading(false)
+            }
+        }
+        fetchAllUsers()
     }, [counterPage]);
 
-    const handleAddUser = (data: AddUserFormValues) => {
+    const handleAddUser = async (data: UserFormValues) => {
+        setLoading(true)
+        setValue("status","active")
         if (data.password !== data.confirm_password) {
             alert("Passwords do not match!");
             return;
         }
-        console.log("Add User Submitted:", data);
-        resetAddForm();
+        try{
+            const res = await register(getValues())
+            alert(`Success register user ${res.data}`)
+        
+        }catch(e){
+            alert(e.response.data.message)
+        }finally{
+            setLoading(false)
+            resetAddForm();
+            window.location.reload()
+
+        }
     };
 
-    const handleEditUser = (data: EditUserFormValues) => {
-        console.log("Edit User Submitted:", data);
-        resetEditForm();
+    const handleEditUser = async () => {
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
+        try{
+            if (!selectedEditId){
+                throw new Error("Id not found")
+            }
+            console.log(typeof selectedEditId)
+            const res = await editUserById(getEditValues(),token,selectedEditId)
+            alert(res.message)
+            window.location.reload()
+
+        }catch(e){
+            if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+            console.log(e)
+
+        }finally{
+            setLoading(false)
+            resetEditForm()
+            window.location.reload()
+        }
     };
 
     const handleSortUser = () => {
         setDataUser([...dataUser].sort((a, b) => a.username.localeCompare(b.username)));
     };
 
-    const handlePreviousPage = () => {
-        if (counterPage > 1) setCounterPage(counterPage - 1);
-    };
 
-    const handleNextPage = () => {
-        if (counterPage < users.length / 10) setCounterPage(counterPage + 1);
-    };
 
-    const handleSearchState = () => {
-        if (!searchNameuser.trim()) {
-            setDataUser(users.slice((counterPage - 1) * 10, 10 * counterPage));
-            return;
-        }
-        const filtered = users.filter(item =>
-            item.username.toLowerCase().includes(searchNameuser.toLowerCase())
-        );
-        setDataUser(filtered.slice((counterPage - 1) * 10, 10 * counterPage));
+    const handleSearchState = async() => {
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
+        try{
+            const res = await getAllUsers(token,0,100,"ASC",searchNameuser)
+
+            setDataUser(res.data)
+            setPagination(res.pagination) 
+
+            }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+                alert(`${e.response.data.status }:${e.response.data.message}`)
+            }finally{
+                setLoading(false)
+            }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -99,10 +170,60 @@ const User: React.FC = () => {
         }
     };
 
-    const handleExportExcel = () => {
-        const res = exportToExcel(dataUser);
-        alert(res);
+    const handleExportExcel = async() => {
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+            alert("Credential invalid")            
+            navigate("/login-admin")
+            return        
+        }
+        try{
+            const res = await getAllUsers(token,0,10000,"ASC")
+            
+            const dataExport = exportToExcel("User",res.data);
+            console.log(dataExport)
+        }catch(e){
+            if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+            alert(e.response.data.message)
+
+        }finally{
+            setLoading(false)
+        }
+       
     };
+
+
+
+    const handleDeleteUser = async (id:number)=>{
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
+        try{
+            setLoading(true)
+            const res = await deleteUserById(id,token)
+            alert(res.message)
+            window.location.reload()
+
+        }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+            alert(`Gagal menghapus data ${e.response.message}`)
+
+        }finally{
+            setLoading(false)
+        }
+
+    }
 
     return (
         <div>
@@ -114,7 +235,7 @@ const User: React.FC = () => {
                         <DialogTrigger asChild>
                             <Button className="bg-slate-100 border border-emerald-500 shadow-sm text-emerald-500 hover:bg-emerald-100 cursor-pointer flex items-center gap-2">
                                 <span className="text-lg">+</span>
-                                <span>Add karyawan</span>
+                                <span>Add user</span>
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -168,6 +289,8 @@ const User: React.FC = () => {
                                             required: "Confirm password is required",
                                             validate: (value) => value === watchAdd("password") || "Passwords do not match",
                                         })}
+                                        type="password"
+
                                         placeholder="Masukkan ulang password"
                                         className="col-span-3 md:text-sm text-xs"
                                     />
@@ -241,7 +364,7 @@ const User: React.FC = () => {
                                     <div className="flex items-center gap-3">
                                         <Dialog>
                                             <TooltipOverlay text="Edit">
-                                                <DialogTrigger asChild>
+                                                <DialogTrigger asChild onClick={()=>{setSelectedEditId(item.id)}}>
                                                     <Pencil className="text-slate-500 cursor-pointer" size={15} />
                                                 </DialogTrigger>
                                             </TooltipOverlay>
@@ -256,6 +379,7 @@ const User: React.FC = () => {
                                                             Username
                                                         </Label>
                                                         <Input
+                                                            defaultValue={item.username}
                                                             {...registerEdit("username", {
                                                                 required: "Username can't be empty",
                                                                 minLength: { value: 5, message: "Username must be at least 5 characters" },
@@ -268,24 +392,22 @@ const User: React.FC = () => {
                                                         <p className="text-red-500 text-xs">{editErrors.username.message}</p>
                                                     )}
                                                     <div className="md:grid md:grid-cols-4 space-y-2 md:space-y-0 items-center gap-4">
-                                                        <Label htmlFor="status" className="text-right">
+
+                                                 <Label htmlFor="status" className="text-right">
                                                             Status
                                                         </Label>
-                                                        <Select
-                                                            {...registerEdit("status", { required: "Status is required" })}
-                                                            defaultValue=""
-                                                        >
-                                                            <SelectTrigger className="w-[180px] ">
-                                                                <SelectValue placeholder="Pilih status" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectLabel>Pilih status user</SelectLabel>
-                                                                    <SelectItem value="Active">Active</SelectItem>
-                                                                    <SelectItem value="Inactive">Inactive</SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
+                                                        <RadioGroup 
+                                                        onValueChange={(value)=>{setEditValue("status",value)}}
+                                                        defaultValue={item.status}>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="active" id="active" />
+                                                            <Label htmlFor="active">Active</Label>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="inactive" id="inactive" />
+                                                            <Label htmlFor="inactive">Inactive</Label>
+                                                        </div>
+                                                        </RadioGroup>
                                                     </div>
                                                     {editErrors.status && (
                                                         <p className="text-red-500 text-xs">{editErrors.status.message}</p>
@@ -300,7 +422,7 @@ const User: React.FC = () => {
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
-                                        <DialogAlert>
+                                        <DialogAlert onDelete={()=>{handleDeleteUser(item.id)}}>
                                             <TooltipOverlay text="Delete">
                                                 <AlertDialogTrigger asChild>
                                                     <Trash2 size={15} className="text-red-500 cursor-pointer" />
@@ -315,12 +437,8 @@ const User: React.FC = () => {
                 </Table>
             </section>
             <section className="mt-2">
-                <PaginationOverlay
-                    total_data={users.length}
-                    counter_data={counterPage}
-                    handlePreviousPage={handlePreviousPage}
-                    handleNextPage={handleNextPage}
-                />
+                
+                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} setCounterPage={setCounterPage} />
             </section>
         </div>
     );

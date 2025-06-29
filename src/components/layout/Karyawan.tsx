@@ -31,13 +31,12 @@ const Karyawan: React.FC = () => {
     const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
     const {setLoading} = useContext(UtilityContext)
-    const [token,setToken] = useState("")
     const navigate = useNavigate()
     const {
         register: registerAdd,
         handleSubmit:handleAddSubmit ,
         formState: { errors: addErrors },
-        setValue:setJenisKelamin,
+        setValue:setGender,
         reset: resetAddForm,
     } = useForm<KaryawanFormValues>();
     
@@ -45,18 +44,20 @@ const Karyawan: React.FC = () => {
     register: registerEdit,
     handleSubmit: handleEditSubmit,
     formState: { errors: editErrors },
-
+    setValue:setEditValue,
+    getValues:getEditValues,
     reset: resetEditForm,
   } = useForm<KaryawanFormValues>();
 
     useEffect(()=>{
+        setLoading(true)
+
         const token = getCookie("token")
         if(!token){
-            throw new Error("token not found in browser")
-        }
-        setToken(token)
-        setLoading(true)
-        const fetchKaryawan = async ()=>{
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
+        const fetchAllKaryawan = async ()=>{
             try{
                 const res = await getAllKaryawan(token,counterPage)
 
@@ -74,21 +75,24 @@ const Karyawan: React.FC = () => {
             }
 
         }
-        fetchKaryawan()
+        fetchAllKaryawan()
     },[counterPage])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
+            console.log("enter data")
             e.preventDefault();
             handleSearchState();
         }
     };
 
     const handleSearchState = async () => {
-            if (!searchNameKaryawan.trim()) {
-                return;
-            }
+            const token = getCookie("token")
+            if(!token){
+    alert("Credential invalid")            
+    navigate("/login-admin")
+            return            }
             try{
-                const res = await getAllKaryawan(token,counterPage,20,searchNameKaryawan)
+                const res = await getAllKaryawan(token,0,20,"ASC",searchNameKaryawan)
 
                 setDataKaryawan(res.data)
                 setPagination(res.pagination) 
@@ -108,34 +112,53 @@ const Karyawan: React.FC = () => {
         setDataKaryawan([...dataKaryawan].sort((a, b) => a.name.localeCompare(b.name)));
     };
     const handleAddKaryawan = async (data: KaryawanFormValues) => {
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
         setLoading(true)
         try{
             const res = await createKaryawan(data,token)
-            console.log(res)
             alert(res.message)
             window.location.reload()
 
 
         }catch(e){
+                if(e.response.status === 403 ){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
             alert(`Gagal menambahkan data ${e}`)
-            console.log(e)
         }finally{
             resetAddForm();
             setLoading(false)
         }
 
     };
-    const handleEditKaryawan = async (data: KaryawanFormValues) => {
+    const handleEditKaryawan = async () => {
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
         try{
-            console.log(selectedEditId)
             if (!selectedEditId){
                 throw new Error("Id not found")
             }
-            const res = await editKaryawanById(data,token,selectedEditId)
+            const res = await editKaryawanById(getEditValues(),token,selectedEditId)
             alert(res.message)
         }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
             alert(`Gagal mengedit data ${e}`)
         }finally{
+            setLoading(false)
             resetEditForm();
             window.location.reload()
 
@@ -144,6 +167,11 @@ const Karyawan: React.FC = () => {
     };
 
     const handleDeleteKaryawan = async (id:number)=>{
+        const token = getCookie("token")
+        if(!token){
+alert("Credential invalid")            
+navigate("/login-admin")
+            return        }
         try{
             setLoading(true)
             const res = await deleteKaryawanById(id,token)
@@ -151,6 +179,11 @@ const Karyawan: React.FC = () => {
             window.location.reload()
 
         }catch(e){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
             alert(`Gagal menghapus data ${e.response.message}`)
 
         }finally{
@@ -161,10 +194,32 @@ const Karyawan: React.FC = () => {
 
 
   
-    const handleExportExcel = ()=>{
-        const res = exportToExcel(dataKaryawan)
-        alert(res)
-    }
+    const handleExportExcel = async() => {
+        setLoading(true)
+        const token = getCookie("token")
+        if(!token){
+            alert("Credential invalid")            
+            navigate("/login-admin")
+            return        
+        }
+        try{
+            const res = await getAllKaryawan(token,0,10000,"ASC")
+            
+            const dataExport = exportToExcel("Karyawan",res.data);
+            console.log(dataExport)
+        }catch(e){
+            if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+            alert(e.response.data.message)
+
+        }finally{
+            setLoading(false)
+        }
+       
+    };
 
     return (
         
@@ -244,18 +299,15 @@ const Karyawan: React.FC = () => {
                                                             Gender
                                                         </Label>
                                                         <RadioGroup 
-                                                                                                                        {...registerAdd("gender", {
-                                            required: "gender can't be empty",
-       
-                                        })}   
+                                                                                                                                                                        onValueChange={(value)=>{setGender("gender",value)}}
                                                         >
                                                         <div className="flex items-center space-x-2">
                                                             <RadioGroupItem value="male" id="male" />
-                                                            <Label htmlFor="male">Male</Label>
+                                                            <Label htmlFor="male">male</Label>
                                                         </div>
                                                         <div className="flex items-center space-x-2">
                                                             <RadioGroupItem value="female" id="female" />
-                                                            <Label htmlFor="female">Female</Label>
+                                                            <Label htmlFor="female">female</Label>
                                                         </div>
                                                         </RadioGroup>
 
@@ -336,7 +388,10 @@ const Karyawan: React.FC = () => {
                                     <div className="flex items-center gap-3">
                                         <Dialog>
                                             <TooltipOverlay text="Edit">
-                                            <DialogTrigger asChild onClick={()=>{setSelectedEditId(item.id)}}>
+                                            <DialogTrigger asChild onClick={
+                                                ()=>{setSelectedEditId(item.id)}
+                                                
+                                                }>
                                                 
                                                 <Pencil className="text-slate-500 cursor-pointer" size={15} />
                                             </DialogTrigger>
@@ -408,7 +463,9 @@ const Karyawan: React.FC = () => {
                                                         <Label htmlFor="Gender" className="text-right">
                                                             Gender
                                                         </Label>
-                                                        <RadioGroup defaultValue={item.gender}>
+                                                        <RadioGroup 
+                                                                                                                                                                                                                                                                                        onValueChange={(value)=>{setEditValue("gender",value)}}
+                                                        defaultValue={item.gender}>
                                                         <div className="flex items-center space-x-2">
                                                             <RadioGroupItem value="male" id="male" />
                                                             <Label htmlFor="male">Male</Label>
@@ -448,11 +505,11 @@ const Karyawan: React.FC = () => {
                             </TableRow>
                         ))}
                     </TableBody>
-                </Table>
-            </section>
+                </Table> 
+                </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} />
+                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} setCounterPage={setCounterPage} />
 
             </section>
         </div>

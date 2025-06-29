@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router";
 import { UtilityContext } from "../context/UtilityContext"
 import { useContext } from "react"
 import { capitalize } from "@/helper/capitalize";
+import { Button } from "../ui/button";
 
 const data =[
       {
@@ -42,13 +43,11 @@ const SideBar:React.FC = ()=>{
     }, []);
     
     return(
-        <nav className={`relative left-[0]`} >
-            {/* Header */}
-            <section></section>
-            {/* End Header */}
+        <nav className={`relative left-[0] h-screen`} >
+            
 
             {/* Body */}
-            <section className={`transition-transform  transform duration-300 ease-in-out ease gap-2 h-screen fixed w-70 z-50  space-y-2 bg-white  px-1 items-center ${activeSidebar ? "translate-x-0" : "-translate-x-full"}`}>
+            <section className={`transition-transform flex flex-col border-1  transform duration-300 ease-in-out ease gap-2 h-screen fixed w-70 z-50  space-y-2 bg-white  px-1 justify-between ${activeSidebar ? "translate-x-0" : "-translate-x-full"}`}>
                 <div className="mt-4">
 
                 {
@@ -67,9 +66,10 @@ const SideBar:React.FC = ()=>{
                 }
                 </div>
 
-
             </section>
             {/* End Body */}
+
+
         </nav>
     )
 }

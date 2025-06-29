@@ -7,16 +7,15 @@ import { imageConvert,svgPathToImageFile } from "../helper/imageConvert";
 import { postToCloudinary } from "../data/postToCloudinary";
 import { getCurrentDateAndTime } from "../helper/getClock";
 import { useForm } from "react-hook-form";
-import type {AbsenFormValues } from "@/data/absen";
 import {Button} from "@/components/ui/button"
 import Loading from "@/components/common/Loading";
 import { UtilityContext } from "@/components/context/UtilityContext";
-
+import { createAbsensi } from "@/services/absensi";
+import type { AbsenFormValues } from "@/types/form";
 
 const AbsenPage: React.FC = () => {
     const {loading,setLoading} = useContext(UtilityContext)
     const [photo,setPhoto] = useState<string | null>("")
-    const [signature, setSignature] = useState<string[]>([]);
     
     /**
      * Reference to the signature canvas element.
@@ -38,17 +37,27 @@ const AbsenPage: React.FC = () => {
     const onSubmitForm = async () => {
         setLoading(true)
         const signatureData = sigCanvas.current.svg.innerHTML;
-             
         //Ambil data waktu
         const date_time = getCurrentDateAndTime()
 
-        const updatedValues = getValues();
         
-        const isAnyFieldEmpty = Object.values(updatedValues).some(
-            (value) => value === undefined || value === null || value === ""
-        );
-        if (Object.keys(updatedValues).length === 0 || isAnyFieldEmpty) {
-            throw new Error("Semua field harus diisi");
+        const currentHour = new Date().getHours()
+        if(currentHour >= 5 && currentHour <10){
+            setValue("check_in",getCurrentDateAndTime())
+        }else{
+            setValue("check_out",getCurrentDateAndTime())
+        }
+        
+
+        const updatedValues = getValues();
+
+        if (updatedValues.karyawan_id) {
+            const karyawanId = Number(updatedValues.karyawan_id);
+
+            if (isNaN(karyawanId)) {
+                throw new Error("Invalid karyawan_id: Must be a number");
+            }  
+            setValue("karyawan_id",karyawanId)      
         }
 
         if (photo === null) {
@@ -71,22 +80,29 @@ const AbsenPage: React.FC = () => {
             setValue("url_profile", url_profile)
             setValue("url_signature", url_signature)
             setValue("create_date",date_time)
+            const  res = await createAbsensi(getValues())
             //clear input
-            sigCanvas.current.clear()
-            setPhoto("")
             return Swal.fire({
                 title:"Sucess absensi",
                 icon: "success",
+                html:`
+                    <p>Karyawan ID: ${String(res.data.karyawan_id)}</p>
+
+          <p>Nama: ${String(res.data.karyawan_name)}</p>
+                `
             })
         } catch(error){
+            console.log(error)
             return Swal.fire({
                 title: "Gagal absensi",
                 icon: "error",
-                text: String(error)
+                text: String(error.response.data.message)
             });
         }finally{
-            setLoading(false)
             reset()
+            sigCanvas.current.clear()
+            setPhoto("")
+            setLoading(false)
 
 
         }
@@ -122,7 +138,7 @@ const AbsenPage: React.FC = () => {
                 {/* End body section */}
             </Card>
         </div>
-                </>
+    </>
     );
 };
 

@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 
-export const exportToExcel = (data: any[]):string => {
+export const exportToExcel = (name_file:string,data: any[]):string => {
     const date = new Date()
     const dateExport = date.getDate()
     const monthExport = date.getMonth()
@@ -13,7 +13,7 @@ export const exportToExcel = (data: any[]):string => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
 
     // Menyimpan workbook ke file
-    XLSX.writeFile(workbook, `${dateExport}/${monthExport}/${yearExport} - Absen Pelita Jaya food.xlsx`);
+    XLSX.writeFile(workbook, `${dateExport}/${monthExport}/${yearExport} - ${name_file} Pelita Jaya food.xlsx`);
 
-    return "berhasil"
+    return "berhasil download"
 };

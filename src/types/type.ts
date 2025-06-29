@@ -14,6 +14,7 @@ export interface IUser{
 }
 
 export interface IAbsensi{
+    absensi_id?:number,
     karyawan_id:number,
     name:string,
     url_profile:string,
@@ -31,11 +32,16 @@ export interface ILogin {
   password: string;
 }
 
+
+
 interface IResponse{
     message:string
     pagination?:any
 }
+export interface IResponseRegister extends IResponse{
+    data?:string
 
+}
 export interface IResponseLogin extends IResponse{
     token:string
 }

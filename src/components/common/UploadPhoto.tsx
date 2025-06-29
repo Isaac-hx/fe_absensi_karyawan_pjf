@@ -46,17 +46,15 @@ const handleScreenshot = async () => {
               <DialogTitle>Ambil Foto</DialogTitle>
           </DialogHeader>
           <DialogDescription>
-              <div>
                 <Webcam 
               screenshotFormat="image/jpeg"
               ref={webCamRef}
               mirrored={true}/>
-              </div>
           </DialogDescription>
 
           <DialogFooter>
             <DialogClose asChild>
-            <Button onClick={handleScreenshot}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">AmbilFoto</Button>
+            <Button onClick={handleScreenshot}  className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer" type="submit">Ambil Foto</Button>
           </DialogClose>
           </DialogFooter>
           </DialogContent>

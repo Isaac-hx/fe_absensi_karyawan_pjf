@@ -8,7 +8,6 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const token = getCookie("token") 
-    console.log(token)
     return token ? <>{children}</> : <Navigate to={"/login-admin"}/>;
 };
 

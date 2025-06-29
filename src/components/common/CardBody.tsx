@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
-import type { AbsenFormValues } from "@/data/absen";
+import type { AbsenFormValues } from "@/types/form";
 
 //Interface component
 interface ICardBody {
@@ -35,7 +35,7 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
      */
     const checkTime = ()=>{
         const currentHour = new Date().getHours()
-        SetShowTargetWork(currentHour >= 5 && currentHour <10)
+        SetShowTargetWork(currentHour >= 5 && currentHour <12)
 
     }
     checkTime()
@@ -83,14 +83,14 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
           <Input
             className="border border-emerald-200 pl-3 pr-10 py-2 rounded-lg focus:ring-0 focus:border-0 w-full text-xs md:text-sm"
               placeholder="Masukan ID Karyawan"
-            id="employee_id"
-            {...register("employee_id", {
+            id="karyawan_id"
+            {...register("karyawan_id", {
             required: "ID Karyawan can't be empty",
             })}
             
           />
-          {error.employee_id &&(
-            <p className="text-red-500 text-xs">{error.employee_id.message}</p>)}
+          {error.karyawan_id &&(
+            <p className="text-red-500 text-xs">{error.karyawan_id.message}</p>)}
         </div>
         <div className="space-y-2">
           <Label htmlFor="signature">

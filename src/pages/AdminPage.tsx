@@ -9,15 +9,16 @@ const AdminPage:React.FC = ()=>{
     const {loading} = useContext(UtilityContext)
     return(
         <>
-<div>
-    {loading && <Loading/>}
+                {loading && <Loading/>}
+
+    <div>
         {/* Header */}
         <Header />
 
         {/* Main Content */}
         <div className="md:grid  md:grid-cols-5">
             {/* Sidebar */}
-            <div className="w-full md:w-1/4 lg:w-1/5">
+            <div className="w-full md:w-1/4 lg:w-1/5 ">
                 <SideBar />
             </div>
 
