@@ -14,10 +14,7 @@ interface UserDataLogin {
   username?: string;
 }
 
-interface UserDataLoginType {
-  globalUser: UserDataLogin;
-  setGlobalUser: React.Dispatch<React.SetStateAction<UserDataLogin>>;
-}
+
 
 interface AppContextType {
   data: AppData;

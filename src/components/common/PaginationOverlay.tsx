@@ -9,12 +9,11 @@ import {
 } from "@/components/ui/pagination"
 
 const PaginationOverlay: React.FC<{
-    total_items: number;
-    total_pages: number;
-    current_page: number;
-    items_per_page: number;
+    total_items?: number;
+    total_pages?: number;
+    current_page?: number;
     setCounterPage: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ total_items, total_pages, current_page, items_per_page, setCounterPage }) => {
+}> = ({ total_items, total_pages, current_page, setCounterPage }) => {
     return (
         <div className="flex justify-end">
             <div className="bg-white flex p-2 items-center rounded-lg gap-2 shadow-sm border">
@@ -35,7 +34,7 @@ const PaginationOverlay: React.FC<{
                                             : "cursor-pointer"
                                     }
                                     onClick={() => {
-                                        if (current_page > 1) {
+                                        if (current_page !== undefined && current_page > 1) {
                                             setCounterPage(current_page - 1);
                                         }
                                     }}
@@ -43,12 +42,12 @@ const PaginationOverlay: React.FC<{
                                 {/* Tombol Next */}
                                 <PaginationNext
                                     className={
-                                        current_page >= total_pages 
+                                        current_page!== undefined && total_pages !== undefined && current_page >= total_pages 
                                             ? "text-slate-400 cursor-auto hover:text-slate-400"
                                             : "cursor-pointer"
                                     }
                                     onClick={() => {
-                                        if (current_page < total_pages ) {
+                                        if (current_page !== undefined && total_pages!== undefined && current_page < total_pages ) {
                                             setCounterPage(current_page + 1);
                                         }
                                     }}

@@ -14,9 +14,10 @@ import { UtilityContext } from "../context/UtilityContext";
 import { useNavigate } from "react-router";
 import { getAllUsers } from "@/services/user";
 import { getAllAbsensi } from "@/services/absensi";
-import type{ IAbsensi } from "@/types/type";
+import type{ IAbsensi, IPagination } from "@/types/type";
 import { Table,TableHeader,TableBody,TableCell,TableHead,TableRow } from "@/components/ui/table";
 import { formatTime } from "@/helper/convertTime";
+import { get } from "node:http";
 
 interface ExpandableTextProps {
   text: string
@@ -65,8 +66,8 @@ function ExpandableText({ text, maxWords = 3 }: ExpandableTextProps) {
 const Dashboard: React.FC = () => {
     const {setLoading} = useContext(UtilityContext)
     const [time, setTime] = useState(new Date());
-    const [totalKaryawan, setTotalKaryawan] = useState<number>(0)
-    const [totalUser, setTotalUser] = useState<number>(0)
+    const [totalKaryawan, setTotalKaryawan] = useState<number>()
+    const [totalUser, setTotalUser] = useState<number>()
     const [recentAbsensi,setRecentAbsensi] = useState<IAbsensi[]>()
 
     const navigate = useNavigate()
@@ -89,10 +90,18 @@ const Dashboard: React.FC = () => {
         const getTotalKaryawan = await getAllKaryawan(token);
         const getTotalUsers = await getAllUsers(token)
         const getRecentAbsensi = await getAllAbsensi(token,0,5,"DESC")
-        setTotalKaryawan(getTotalKaryawan.pagination.total_items)
-        setTotalUser(getTotalUsers.pagination.total_items)
-        setRecentAbsensi(getRecentAbsensi.data)
-      } catch (e) {
+        if(getTotalKaryawan.pagination?.total_items !== undefined) {
+          setTotalKaryawan(getTotalKaryawan.pagination.total_items)
+        }
+        if(getTotalUsers.pagination?.total_items !== undefined) {
+          setTotalUser(getTotalUsers.pagination.total_items)
+        }
+        if(Array.isArray(getRecentAbsensi.data)) {
+          setRecentAbsensi(getRecentAbsensi.data)
+        } else if (getRecentAbsensi.data) {
+          setRecentAbsensi([getRecentAbsensi.data])
+        }
+      } catch (e:any) {
         if(e.response.status === 403 ){
           alert(e.response.data.message)
             navigate("/login-admin")

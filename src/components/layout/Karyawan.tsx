@@ -6,12 +6,11 @@ import { Label } from "@/components/ui/label";
 import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download, Trophy } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Dialog, DialogTrigger,DialogContent, DialogHeader,DialogDescription,DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Select, SelectTrigger, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
 import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
-import type { IKaryawan } from "@/types/type";
+import {type IPagination, type IKaryawan } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useForm } from "react-hook-form";
 import { exportToExcel } from "@/helper/export";
@@ -27,7 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 const Karyawan: React.FC = () => {
     const [counterPage, setCounterPage] = useState(0);
     const [selectedEditId,setSelectedEditId] = useState<number>()
-    const [pagination,setPagination] = useState({})
+    const [pagination,setPagination] = useState<IPagination |undefined>()
     const [dataKaryawan,setDataKaryawan] = useState<IKaryawan[]>([])
     const [searchNameKaryawan, setSearchNameKaryawan] = useState("");
     const {setLoading} = useContext(UtilityContext)
@@ -60,10 +59,12 @@ navigate("/login-admin")
         const fetchAllKaryawan = async ()=>{
             try{
                 const res = await getAllKaryawan(token,counterPage)
-
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
                 setDataKaryawan(res.data)
                 setPagination(res.pagination)
-            }catch(e){
+            }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -79,7 +80,7 @@ navigate("/login-admin")
     },[counterPage])
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            console.log("enter data")
+            ("enter data")
             e.preventDefault();
             handleSearchState();
         }
@@ -93,11 +94,13 @@ navigate("/login-admin")
             return            }
             try{
                 const res = await getAllKaryawan(token,0,20,"ASC",searchNameKaryawan)
-
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
                 setDataKaryawan(res.data)
                 setPagination(res.pagination) 
 
-            }catch(e){
+            }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -124,7 +127,7 @@ navigate("/login-admin")
             window.location.reload()
 
 
-        }catch(e){
+        }catch(e:any){
                 if(e.response.status === 403 ){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -150,7 +153,7 @@ navigate("/login-admin")
             }
             const res = await editKaryawanById(getEditValues(),token,selectedEditId)
             alert(res.message)
-        }catch(e){
+        }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -178,7 +181,7 @@ navigate("/login-admin")
             alert(res.message)
             window.location.reload()
 
-        }catch(e){
+        }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -204,10 +207,12 @@ navigate("/login-admin")
         }
         try{
             const res = await getAllKaryawan(token,0,10000,"ASC")
-            
-            const dataExport = exportToExcel("Karyawan",res.data);
-            console.log(dataExport)
-        }catch(e){
+             if (!Array.isArray(res.data)) {
+                                throw new Error("Data not found or invalid format");
+                            }
+            const dataExport = exportToExcel("Absensi",res.data);
+            alert(`Download file ${dataExport} sucess!`)
+        }catch(e:any){
             if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -509,7 +514,7 @@ navigate("/login-admin")
                 </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} setCounterPage={setCounterPage} />
+                    <PaginationOverlay current_page={pagination?.current_page} total_items={pagination?.total_items}  total_pages={pagination?.total_pages} setCounterPage={setCounterPage} />
 
             </section>
         </div>

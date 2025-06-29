@@ -10,8 +10,7 @@ import { RadioGroup,RadioGroupItem } from "@/components/ui/radio-group";
 import DialogAlert from "@/components/common/DialogAlertOverlay";
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
-import { users } from "@/data/user";
-import type { IUser } from "@/types/type";
+import {type IPagination, type IUser } from "@/types/type";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
@@ -25,7 +24,7 @@ import { useNavigate } from "react-router";
 
 const User: React.FC = () => {
     const {setLoading} = useContext(UtilityContext)
-    const [pagination,setPagination] = useState({})
+    const [pagination,setPagination] = useState<IPagination>()
     const [selectedEditId,setSelectedEditId] = useState<number>()
     
     const [dataUser, setDataUser] = useState<IUser[]>([]);
@@ -64,9 +63,12 @@ navigate("/login-admin")
         const fetchAllUsers = async ()=>{
             try{
                 const res = await getAllUsers(token,counterPage)
+                    if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
                 setDataUser(res.data)
                 setPagination(res.pagination)
-            }catch(e){
+            }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -91,7 +93,7 @@ navigate("/login-admin")
             const res = await register(getValues())
             alert(`Success register user ${res.data}`)
         
-        }catch(e){
+        }catch(e:any){
             alert(e.response.data.message)
         }finally{
             setLoading(false)
@@ -112,18 +114,17 @@ navigate("/login-admin")
             if (!selectedEditId){
                 throw new Error("Id not found")
             }
-            console.log(typeof selectedEditId)
             const res = await editUserById(getEditValues(),token,selectedEditId)
             alert(res.message)
             window.location.reload()
 
-        }catch(e){
+        }catch(e:any){
             if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
                     return
                 }
-            console.log(e)
+            (e)
 
         }finally{
             setLoading(false)
@@ -147,11 +148,13 @@ navigate("/login-admin")
             return        }
         try{
             const res = await getAllUsers(token,0,100,"ASC",searchNameuser)
-
+                    if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
             setDataUser(res.data)
             setPagination(res.pagination) 
 
-            }catch(e){
+            }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -180,10 +183,13 @@ navigate("/login-admin")
         }
         try{
             const res = await getAllUsers(token,0,10000,"ASC")
-            
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
             const dataExport = exportToExcel("User",res.data);
-            console.log(dataExport)
-        }catch(e){
+            alert(`Download file ${dataExport} sucess!`)
+       
+        }catch(e:any){
             if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -211,7 +217,7 @@ navigate("/login-admin")
             alert(res.message)
             window.location.reload()
 
-        }catch(e){
+        }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -438,7 +444,7 @@ navigate("/login-admin")
             </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} setCounterPage={setCounterPage} />
+                    <PaginationOverlay current_page={pagination?.current_page} total_items={pagination?.total_items} total_pages={pagination?.total_pages} setCounterPage={setCounterPage} />
             </section>
         </div>
     );

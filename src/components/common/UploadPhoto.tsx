@@ -1,9 +1,8 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, {  useRef } from "react";
 import { Camera  } from "lucide-react";
 import Webcam from "react-webcam"
 import { Dialog,DialogHeader,DialogTrigger,DialogTitle,DialogFooter,DialogClose,DialogContent,DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import DialogOverlay from "./DialogOverlay";
 
 const PhotoInput:React.FC<{photo:string | null,setPhoto:React.Dispatch<React.SetStateAction<string | null>>}> = ({photo,setPhoto})=> {
     const webCamRef = useRef(null);

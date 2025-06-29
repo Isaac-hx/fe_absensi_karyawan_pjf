@@ -1,5 +1,4 @@
 export const getCookie = (name:string):string | undefined=>{
-    console.log("Ini fungsi get cookies",name)
     const value = `; ${document.cookie}`
     const parts = value.split(`; ${name}=`)
     if (parts.length === 2) return parts.pop()?.split(';').shift() ?? undefined;

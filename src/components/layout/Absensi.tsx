@@ -8,9 +8,9 @@ import { useContext, useEffect, useState } from "react";
 
 import TooltipOverlay from "@/components/common/TooltipOverlay";
 import PaginationOverlay from "@/components/common/PaginationOverlay";
-import type { IAbsensi } from "@/types/type";
+import {type IPagination, type IAbsensi } from "@/types/type";
 import { exportToExcel } from "@/helper/export";
-import { getAllKaryawan } from "@/services/karyawan";
+
 import { UtilityContext } from "../context/UtilityContext";
 import {
   Sheet,
@@ -22,7 +22,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { absensiData } from "@/data/absensi";
 import { Textarea } from "../ui/textarea";
 import { getCookie } from "@/helper/getCookie";
 import { useNavigate } from "react-router";
@@ -71,11 +70,11 @@ function ExpandableText({ text, maxWords = 3 }: ExpandableTextProps) {
 
 const Absensi: React.FC = () => {
     const [counterPage, setCounterPage] = useState(1);
-    const [dataAbsensi,setDataAbsensi] = useState<IAbsensi[]>([])
-    const [detailAbsensi,setDetailAbsensi] = useState<IAbsensi>()
+    const [dataAbsensi,setDataAbsensi] = useState<IAbsensi[] >([])
+    const [detailAbsensi,setDetailAbsensi] = useState<IAbsensi | undefined>()
     const [searchAbsensi, setSearchAbsensi] = useState("");
     const {setLoading,loading} = useContext(UtilityContext)
-    const [pagination,setPagination] = useState({})
+    const [pagination,setPagination] = useState<IPagination |undefined>()
     
     const navigate = useNavigate()
    
@@ -90,11 +89,18 @@ const Absensi: React.FC = () => {
         const fetchAllAbsensi = async ()=>{
             try{
                 const res = await getAllAbsensi(token,counterPage)
-                console.log(res)
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
                 setDataAbsensi(res.data)
                 setPagination(res.pagination)
-            }catch(e){
-                alert(e)
+            }catch(e:any){
+                if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
+                alert(`${e.response.data.status }:${e.response.data.message}`)
             }finally{
                 setLoading(false)
             }
@@ -131,11 +137,13 @@ const Absensi: React.FC = () => {
             return            }
             try{
                 const res = await getAllAbsensi(token,0,20,"ASC",searchAbsensi)
-
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
                 setDataAbsensi(res.data)
                 setPagination(res.pagination) 
 
-            }catch(e){
+            }catch(e:any){
                 if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -146,7 +154,11 @@ const Absensi: React.FC = () => {
 
         };
 
-    const fetchDetailAbsensi = async (id:number)=>{
+    const fetchDetailAbsensi = async (id:number | undefined)=>{
+        if(id === undefined){
+            alert("ID not found/invalid")
+            return
+        }
         setLoading(true)
         const token = getCookie("token")
 
@@ -156,11 +168,14 @@ const Absensi: React.FC = () => {
             return        }
         try{
             const res = await getAbsensiById(token,id)
-            setDetailAbsensi(res)
-            console.log(res)
-        }catch(e){
 
-            console.log(e)
+            setDetailAbsensi(Array.isArray(res.data) ? res.data[0] : res.data)
+        }catch(e:any){
+            if(e.response.status === 403){
+                    alert(e.response.data.message)
+                    navigate("/login-admin")
+                    return
+                }
         }finally{
             setLoading(false)
         }
@@ -182,10 +197,12 @@ const Absensi: React.FC = () => {
         }
         try{
             const res = await getAllAbsensi(token,0,10000,"ASC")
-            
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Data not found or invalid format");
+                }
             const dataExport = exportToExcel("Absensi",res.data);
-            console.log(dataExport)
-        }catch(e){
+            alert(`Download file ${dataExport} sucess!`)
+        }catch(e:any){
             if(e.response.status === 403){
                     alert(e.response.data.message)
                     navigate("/login-admin")
@@ -410,7 +427,7 @@ const Absensi: React.FC = () => {
             </section>
             <section className="mt-2">
                 
-                    <PaginationOverlay current_page={pagination.current_page} total_items={pagination.total_items} items_per_page={pagination.items_per_page} total_pages={pagination.total_pages} setCounterPage={setCounterPage} />
+                    <PaginationOverlay current_page={pagination?.current_page} total_items={pagination?.total_items}  total_pages={pagination?.total_pages} setCounterPage={setCounterPage} />
 
             </section>
         </div>

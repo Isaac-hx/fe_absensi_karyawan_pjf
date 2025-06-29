@@ -1,4 +1,4 @@
-export const formatTime = (dateString: string): string => {
+export const formatTime = (dateString: string |undefined): string => {
 if(!dateString){
     return "-"
 }

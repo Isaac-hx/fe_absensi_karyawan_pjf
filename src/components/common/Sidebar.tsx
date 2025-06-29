@@ -1,11 +1,10 @@
 import type React from "react";
 import { Users,Notebook,ShieldUser,Home } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { UtilityContext } from "../context/UtilityContext"
 import { useContext } from "react"
 import { capitalize } from "@/helper/capitalize";
-import { Button } from "../ui/button";
 
 const data =[
       {

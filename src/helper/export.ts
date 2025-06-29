@@ -1,6 +1,7 @@
+import type { IAbsensi, IKaryawan, IUser } from "@/types/type";
 import * as XLSX from "xlsx";
 
-export const exportToExcel = (name_file:string,data: any[]):string => {
+export const exportToExcel = (name_file:string,data: IAbsensi[] | IKaryawan[] | IUser[]):string => {
     const date = new Date()
     const dateExport = date.getDate()
     const monthExport = date.getMonth()

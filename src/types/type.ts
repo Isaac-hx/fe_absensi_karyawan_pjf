@@ -32,11 +32,15 @@ export interface ILogin {
   password: string;
 }
 
-
+export interface IPagination{
+    total_items: number;
+    total_pages: number;
+    current_page: number;
+}
 
 interface IResponse{
     message:string
-    pagination?:any
+    pagination?:IPagination
 }
 export interface IResponseRegister extends IResponse{
     data?:string
@@ -44,6 +48,7 @@ export interface IResponseRegister extends IResponse{
 }
 export interface IResponseLogin extends IResponse{
     token:string
+    username:string
 }
 
 export interface IResponseUser extends IResponse{

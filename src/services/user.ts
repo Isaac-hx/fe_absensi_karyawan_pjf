@@ -1,4 +1,4 @@
-import type { IResponseKaryawan, IResponseUser } from "@/types/type"
+import type { IResponseUser } from "@/types/type"
 import type { KaryawanFormValues, UserFormValues } from "@/types/form"
 
 import axiosInstance from "axios"
@@ -6,9 +6,9 @@ import axiosInstance from "axios"
 
 const url = import.meta.env.VITE_BASE_URL
 
-export const getAllUsers = async (token:string,page:number=0,limit:number=10,order:string="DESC",name:string=""):Promise<IResponseKaryawan> => {
+export const getAllUsers = async (token:string,page:number=0,limit:number=10,order:string="DESC",name:string=""):Promise<IResponseUser> => {
     try {
-        const res = await axiosInstance.get<IResponseKaryawan>(`${url}/api/users?page=${page}&limit=${limit}&order=${order}&username=${name}`,{
+        const res = await axiosInstance.get<IResponseUser>(`${url}/api/users?page=${page}&limit=${limit}&order=${order}&username=${name}`,{
             headers:{
                 Authorization:`Bearer ${token}`
             }
@@ -19,9 +19,9 @@ export const getAllUsers = async (token:string,page:number=0,limit:number=10,ord
     }
 };
 
-export const getKaryawanById = async (id:number,token:string):Promise<IResponseKaryawan> => {
+export const getKaryawanById = async (id:number,token:string):Promise<IResponseUser> => {
     try {
-        const res = await axiosInstance.get<IResponseKaryawan>(`${url}/api/karyawan/${id}`,{
+        const res = await axiosInstance.get<IResponseUser>(`${url}/api/karyawan/${id}`,{
             headers:{
                 Authorization:`Bearer ${token}`
             }
@@ -32,9 +32,9 @@ export const getKaryawanById = async (id:number,token:string):Promise<IResponseK
     }
 };
 
-export const deleteUserById = async (id:number,token:string):Promise<IResponseKaryawan> => {
+export const deleteUserById = async (id:number,token:string):Promise<IResponseUser> => {
     try {
-        const res = await axiosInstance.delete<IResponseKaryawan>(`${url}/api/users/${id}`,{
+        const res = await axiosInstance.delete<IResponseUser>(`${url}/api/users/${id}`,{
             headers:{
                 Authorization:`Bearer ${token}`
             }
@@ -45,9 +45,9 @@ export const deleteUserById = async (id:number,token:string):Promise<IResponseKa
     }
 };
 
-export const createKaryawan = async (data:KaryawanFormValues,token:string):Promise<IResponseKaryawan> => {
+export const createKaryawan = async (data:KaryawanFormValues,token:string):Promise<IResponseUser> => {
     try {
-        const res = await axiosInstance.post<IResponseKaryawan>(`${url}/api/karyawan`,data,{headers:{
+        const res = await axiosInstance.post<IResponseUser>(`${url}/api/karyawan`,data,{headers:{
             Authorization:`Bearer ${token}`
         }});
         return res.data

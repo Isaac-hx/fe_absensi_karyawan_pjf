@@ -86,13 +86,12 @@ const AbsenPage: React.FC = () => {
                 title:"Sucess absensi",
                 icon: "success",
                 html:`
-                    <p>Karyawan ID: ${String(res.data.karyawan_id)}</p>
+                    <p>Karyawan ID: ${String(Array.isArray(res.data) ? res.data[0] : res.data?.karyawan_id)}</p>
 
-          <p>Nama: ${String(res.data.karyawan_name)}</p>
+          <p>Nama: ${String(Array.isArray(res.data) ? res.data[0] : res.data?.name)}</p>
                 `
             })
-        } catch(error){
-            console.log(error)
+        } catch(error:any){
             return Swal.fire({
                 title: "Gagal absensi",
                 icon: "error",

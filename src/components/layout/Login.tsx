@@ -34,13 +34,11 @@ const Login = () => {
     try {
       // Authentication logic would go here
       const res = await login(formState)
-      console.log(res.token)
       document.cookie = `token=${res.token}; path=/; SameSite=Strict`
-      console.log(res)
       setGlobalUser({username:res.username})
       navigate("/dashboard-admin")
     } catch (err) {
-      console.log(err)
+      (err)
       setError("Invalid username or password")
     } finally {
       setLoading(false)
