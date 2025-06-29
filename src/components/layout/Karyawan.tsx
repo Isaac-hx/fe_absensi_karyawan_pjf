@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download, Trophy } from "lucide-react";
+import {Search, Pencil, Trash2 ,ArrowDownWideNarrow,Download } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Dialog, DialogTrigger,DialogContent, DialogHeader,DialogDescription,DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { isValidEmail, validateAndFormatPhoneNumber } from "@/helper/validator";
