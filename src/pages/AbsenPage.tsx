@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import Card from "../components/layout/Card";
 import CardHeader from "../components/common/CardHeader";
-import CardBody from "../components/common/CardBody";
+import  CardBody from "../components/common/CardBody";
 import Swal from 'sweetalert2'
 import { imageConvert,svgPathToImageFile } from "../helper/imageConvert";
 import { postToCloudinary } from "../data/postToCloudinary";

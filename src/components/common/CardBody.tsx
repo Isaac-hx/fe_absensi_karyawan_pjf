@@ -70,9 +70,6 @@ const CardBody: React.FC<ICardBody> = ({ sigCanvas,register,error,setValue,photo
   };
 
 
-
-
-
   return (
     <>
       <div className="space-y-4 md:grid md:grid-cols-2 gap-2">

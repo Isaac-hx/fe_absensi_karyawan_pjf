@@ -1,36 +1,60 @@
+"use client"
+
+import type React from "react"
+
 import Header from "@/components/common/Header"
 import SideBar from "@/components/common/Sidebar"
+import Loading from "@/components/common/Loading"
 import { Outlet } from "react-router"
-import { UtilityContext } from "@/components/context/UtilityContext";
-import { useContext } from "react";
-import Loading from "@/components/common/Loading";
+import { UtilityContext } from "@/components/context/UtilityContext"
+import { useContext, useEffect } from "react"
+import { cn } from "@/lib/utils"
 
-const AdminPage:React.FC = ()=>{
-    const {loading} = useContext(UtilityContext)
-    return(
-        <>
-                {loading && <Loading/>}
+const AdminPage: React.FC = () => {
+  const { loading, activeSidebar, setActiveSidebar } = useContext(UtilityContext)
 
-    <div>
-        {/* Header */}
-        <Header />
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setActiveSidebar(false)
+      }
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [setActiveSidebar])
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Loading Overlay */}
+      {loading && <Loading />}
+
+      {/* Header */}
+      <Header />
+
+      {/* Main Layout */}
+      <div className="flex">
+        {/* Sidebar */}
+        <SideBar />
 
         {/* Main Content */}
-        <div className="md:grid  md:grid-cols-5">
-            {/* Sidebar */}
-            <div className="w-full md:w-1/4 lg:w-1/5 ">
-                <SideBar />
+        <main
+          className={cn(
+            "flex-1 transition-all duration-300 ease-in-out",
+            "md:ml-64", // Always offset by sidebar width on desktop
+            "min-h-[calc(100vh-4rem)]", // Account for header height
+          )}
+        >
+          <div className="bg-muted/30 p-4 lg:p-6">
+            <div className="mx-auto max-w-7xl">
+              <Outlet />
             </div>
-
-            {/* Main Content */}
-            <main className="flex-1 col-span-4  bg-slate-100 p-6">
-                <Outlet />
-            </main>
-        </div>
-</div>
-  
-        </>
-    )
+          </div>
+        </main>
+      </div>
+    </div>
+  )
 }
 
 export default AdminPage
