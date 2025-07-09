@@ -11,7 +11,7 @@ import { useContext, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 const AdminPage: React.FC = () => {
-  const { loading, activeSidebar, setActiveSidebar } = useContext(UtilityContext)
+  const { loading, setActiveSidebar } = useContext(UtilityContext)
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
